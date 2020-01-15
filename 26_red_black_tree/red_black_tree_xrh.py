@@ -39,11 +39,10 @@ class RedBlackTree_recursive:
     """
     def __init__(self, key_list=None):
         self.root = None
-        # self.black_leaf = TreeNode(color='b')  # 共用的黑色叶子节点
         for key in key_list:
             self.put(key)
 
-    def isReadNode(self,node):
+    def isRedNode(self,node):
         if node is None:
             return False
         return node.color == 'red'
@@ -99,21 +98,83 @@ class RedBlackTree_recursive:
     def _put(self,p,key,val=0):
 
         if p is None:
-            return TreeNode(key,val,'r')
+            return TreeNode(key,val,'r') # 插入的新节点 必为红色
 
         if ord(key) == ord(p.key):
-            return p
+            p.val=val
 
         elif ord(key)>ord(p.key):
             p.right=self._put(p.right,key,val)
         elif ord(key)<ord(p.key):
             p.left=self._put(p.left,key,val)
 
-        if self.isReadNode(p.right)==True and self.isReadNode(p.left)==False:
+        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==False:
             p=self.rotateLeft(p)
-        if self.isReadNode(p.left)==True and self.isReadNode(p.left.left)==True:
+        if self.isRedNode(p.left)==True and self.isRedNode(p.left.left)==True:
             p=self.rotateRight(p)
-        if self.isReadNode(p.right)==True and self.isReadNode(p.left)==True:
+        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==True:
+            self.flipcolor(p)
+
+        return p
+
+    #  以下为 红黑树删除 所做的实现
+    def moveflipColors(self,h):
+        """
+        用于删除节点的flipColor方法，该方法用于节点的合并，将父节点中的红色部分给与子节点
+        :param h: 
+        :return: 
+        """
+        h.set_black()
+        h.left.set_red()
+        h.right.set_red()
+
+    def deleteMin(self):
+        if self.isRedNode(self.root)==False and self.isRedNode(self.root)==False: #如果根节点的左右子节点是2-节点，我们可以将根设为红节点，
+                                                                                   # 这样才能进行后面的moveRedLeft操作，因为左子树要从根节点借一个红色链接
+            self.root.set_red()
+        self.root=self._deleteMin(self.root)
+        self.root.set_black() #借完以后，将根节点的颜色复原
+
+    def _deleteMin(self,x):
+        if x.left is None : return None # 没有比 x 更小的节点了 ，可以把x 删除
+
+        if self.isRedNode(x.left) == False and self.isRedNode( x.left.left) == False: # 判断x的左节点是不是2-节点
+            x=self.moveRedLeft(x)
+
+        x.left=self._deleteMin(x.left)
+
+        return self.balance(x) # 解除临时组成的4-节点
+
+
+    def  moveRedLeft(self,h):
+        """
+        当前节点的左右子节点都是2-节点，左右子节点需要从父节点中借 两个红链接
+        如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
+        :param h: 
+        :return: 
+        """
+        self.moveflipColors(h) #从父节点中借一个
+
+        if self.isRedNode(h.right.left): #判断兄弟节点，如果是非红节点，也从兄弟节点中借一个
+            h.right=self.rotateRight(h.right)
+            h=self.rotateLeft(h)
+            self.flipcolor(h)  # 从兄弟节点借了一个红链接以后，我们就需要 将刚刚从父节点 借来的红链接 还给父节点了
+        return h
+
+    def balance(self,p):
+        """
+        
+        :param h: 
+        :return: 
+        """
+        if self.isRedNode(p.right):
+            p=self.rotateLeft(p)
+
+        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==False:
+            p=self.rotateLeft(p)
+        if self.isRedNode(p.left)==True and self.isRedNode(p.left.left)==True:
+            p=self.rotateRight(p)
+        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==True:
             self.flipcolor(p)
 
         return p
@@ -183,6 +244,9 @@ if __name__ == '__main__':
 
     nums=['A','C','E','H','L','M','P','R','S','X','T']
     rbtree = RedBlackTree_recursive(nums)
+    print(rbtree)
+
+    rbtree.deleteMin()
     print(rbtree)
 
 
