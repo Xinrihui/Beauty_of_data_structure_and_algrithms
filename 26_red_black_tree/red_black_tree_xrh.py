@@ -128,6 +128,39 @@ class RedBlackTree_recursive:
         h.left.set_red()
         h.right.set_red()
 
+    def  moveRedLeft(self,h):
+        """
+        当前节点的左右子节点都是2-节点，左右子节点需要从父节点中借 两个红链接
+        如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
+        :param h: 
+        :return: 
+        """
+        self.moveflipColors(h) #从父节点h中借 红链接 给两个儿子
+
+        if self.isRedNode(h.right.left): #判断兄弟节点，如果是红节点，也从兄弟节点中借一个
+            h.right=self.rotateRight(h.right)
+            h=self.rotateLeft(h)
+            self.flipcolor(h)  # 从兄弟节点借了一个红链接以后，我们就需要 将刚刚从父节点 借来的红链接 还给父节点了
+        return h
+
+    def balance(self, x):
+        """
+        保证 根节点为x 的子树下 的红链接必然是左链接，并且左右子树黑链接的高度相同
+        :param h: 
+        :return: 
+        """
+        if self.isRedNode(x.right) == True:
+            x = self.rotateLeft(x)
+
+        if self.isRedNode(x.right) == True and self.isRedNode(x.left) == False:
+            x = self.rotateLeft(x)
+        if self.isRedNode(x.left) == True and self.isRedNode(x.left.left) == True:
+            x = self.rotateRight(x)
+        if self.isRedNode(x.right) == True and self.isRedNode(x.left) == True:
+            self.flipcolor(x)
+
+        return x
+
     def deleteMin(self):
         if self.isRedNode(self.root)==False and self.isRedNode(self.root)==False: #如果根节点的左右子节点是2-节点，我们可以将根设为红节点，
                                                                                    # 这样才能进行后面的moveRedLeft操作，因为左子树要从根节点借一个红色链接
@@ -143,41 +176,36 @@ class RedBlackTree_recursive:
 
         x.left=self._deleteMin(x.left)
 
-        return self.balance(x) # 解除临时组成的4-节点
+        return self.balance(x) # 从下往上 解除临时组成的4-节点
 
+    def moveRedRight(self,h):
+        self.moveflipColors(h) #从父节点h中借 红链接 给两个儿子
 
-    def  moveRedLeft(self,h):
-        """
-        当前节点的左右子节点都是2-节点，左右子节点需要从父节点中借 两个红链接
-        如果该节点的右节点的左节点是红色节点，说明兄弟节点不是2-节点，可以从兄弟节点中借一个
-        :param h: 
-        :return: 
-        """
-        self.moveflipColors(h) #从父节点中借一个
-
-        if self.isRedNode(h.right.left): #判断兄弟节点，如果是非红节点，也从兄弟节点中借一个
-            h.right=self.rotateRight(h.right)
-            h=self.rotateLeft(h)
-            self.flipcolor(h)  # 从兄弟节点借了一个红链接以后，我们就需要 将刚刚从父节点 借来的红链接 还给父节点了
+        if self.isRedNode(h.left.left): #判断兄弟节点，如果是红节点，也从兄弟节点中借一个；在这里对于兄弟节点的判断都是.left，因为红色节点只会出现在左边
+            h=self.rotateRight(h)
+            self.flipcolor(h)  # 从兄弟节点借了一个红链接以后，我们就需要 将刚刚从父节点 借来的红链接 还给父节点
         return h
 
-    def balance(self,p):
-        """
-        
-        :param h: 
-        :return: 
-        """
-        if self.isRedNode(p.right):
-            p=self.rotateLeft(p)
+    def deleteMax(self):
+        if self.isRedNode(self.root)==False and self.isRedNode(self.root)==False: #如果根节点的左右子节点是2-节点，我们可以将根设为红节点，
+                                                                                   # 这样才能进行后面的 moveRedRight 操作，因为左子树要从根节点借一个红色链接
+            self.root.set_red()
+        self.root=self._deleteMax(self.root)
+        self.root.set_black() #借完以后，将根节点的颜色复原
 
-        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==False:
-            p=self.rotateLeft(p)
-        if self.isRedNode(p.left)==True and self.isRedNode(p.left.left)==True:
-            p=self.rotateRight(p)
-        if self.isRedNode(p.right)==True and self.isRedNode(p.left)==True:
-            self.flipcolor(p)
+    def _deleteMax(self,x):
 
-        return p
+        if self.isRedNode(x.left) == True:
+            x=self.rotateRight(x)
+
+        if x.right is None : return None # 没有比 x 更大的节点了 ，可以把x 删除
+
+        if self.isRedNode(x.right) == False and self.isRedNode( x.right.left) == False: #
+            x=self.moveRedRight(x)
+
+        x.right=self._deleteMax(x.right)
+
+        return self.balance(x) # 解除临时组成的4-节点
 
     def __repr__(self):
 
@@ -249,8 +277,14 @@ if __name__ == '__main__':
     rbtree.deleteMin()
     print(rbtree)
 
+    rbtree.deleteMin()
+    print(rbtree)
 
+    rbtree.deleteMax()
+    print(rbtree)
 
+    rbtree.deleteMax()
+    print(rbtree)
 
 
 
