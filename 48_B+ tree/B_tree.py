@@ -105,7 +105,7 @@ class Node(object):
 
     def _find_insert_idx_childs(self, v):
         """
-        二分查找，找到有序数组的插入位置
+        对 self.childs 进行二分查找，找到有序数组的插入位置
 
         """
         l=self.childs
@@ -164,29 +164,54 @@ class BTree(object):
 
         def add(self, key, value=None):
             """
-            '插入一条数据到B树
+            插入一条数据到B树
+            若key 已存在，则更新 value 值
             :param key: 
             :param value: 
             :return: 
             """
+            self.length+=1
+            entity= Entity(key,value)
 
+            if self.root:
+                res=self.__findNode(key)
+                Flag=res[0]
+                node=res[1]
+                if Flag: # key 已存在 则更新 value 值
+                    res[2].value=value
 
+                else: # key 不存在，则在叶子节点处进行插入
+                    node.addEntity(entity)
+                    if len(node.entitys) > self.size:
+                        self.__spilt(node)
 
+            else:# 插入第一个 节点
+                self.root=Node()
+                self.root.addEntity(entity)
 
 
         def get(self, key):
             '''通过key查询一个数据'''
 
-            Flag,node = self.__findNode(key)
+            res = self.__findNode(key)
+            Flag=res[0]
+            node=res[1]
 
             if Flag:
-                return node.find(key).value
+                return node.find(key)[1].value
 
         def isEmpty(self):
             return self.length == 0
 
         def __findNode(self, key):
-            '''通过key值查询一个数据在哪个节点,找到就返回该节点'''
+            """
+            通过key值查询一个数据在哪个节点,找到就返回该节点
+            :param key: 
+            :return:  [Flag , node , entity] 
+             其中  Flag ： 若找得到节点 为 True
+                  node ： 若找得到，为Key 对应的节点；若找不到则是 最后一次查找定位的叶子节点
+                  entity： 若找得到，为 Key 所在的节点 所 对应的 实体
+            """
 
             if self.root:
                 current = self.root
@@ -196,7 +221,7 @@ class BTree(object):
                     result = current._find_insert_idx(entitys,key)
 
                     if  result[0] : # 说明 找到节点了
-                        return  True,current
+                        return  [True,current,result[2]]
 
                     else: # result[0] == False # 说明没找到
                         idx = result[1]
@@ -208,18 +233,20 @@ class BTree(object):
                         else:
                             current= current.childs[ idx+1 ]
 
-                # 如果已经 搜索 到了 叶子节点
+                # 如果已经 搜索 到了 叶子节点 ; 如果找不到会一直往下找直到遇到叶子节点
                 entitys = current.entitys
                 result = current._find_insert_idx(entitys, key)
                 if  result[0] : # 说明 找到节点了
-                    return  True,current
+                    return  [True,current,result[2]]
 
-                return False,current
+                return [False,current,None]
 
         def delete(self, key):
             '''通过key删除一个数据项并返回它'''
             pass
 
+        def __merge(self,node):
+            pass
 
         def __spilt(self, node):
             '''
@@ -233,22 +260,23 @@ class BTree(object):
 if __name__ == '__main__':
 
     t = BTree(4)
-    t.add(20)
-    t.add(40)
-    t.add(60)
-    t.add(70, 'c')
-    t.add(80)
-    t.add(10)
-    t.add(30)
-    t.add(15, 'python')
-    t.add(75, 'java')
-    t.add(85)
-    t.add(90)
-    t.add(25)
-    t.add(35, 'c#')
-    t.add(50)
-    t.add(22, 'c++')
-    t.add(27)
-    t.add(32)
-
-    print (t.get(15))
+    t.add(20,'a')
+    print(t.get(20))
+    # t.add(40)
+    # t.add(60)
+    # t.add(70, 'c')
+    # t.add(80)
+    # t.add(10)
+    # t.add(30)
+    # t.add(15, 'python')
+    # t.add(75, 'java')
+    # t.add(85)
+    # t.add(90)
+    # t.add(25)
+    # t.add(35, 'c#')
+    # t.add(50)
+    # t.add(22, 'c++')
+    # t.add(27)
+    # t.add(32)
+    #
+    # print (t.get(15))
