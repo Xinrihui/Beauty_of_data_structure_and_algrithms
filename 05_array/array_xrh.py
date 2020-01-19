@@ -47,12 +47,24 @@ def test2():
     # print(l)
 
 # test2()
+from collections import deque
+
+from queue import Queue
 
 def test3():
 
     l=[99,203]
     l.insert(1,105)
     print(l)
+
+
+
+    l=deque([99,203])
+    print(l)
+    # print(l[0:])
+
+    # q = Queue([99,203])
+    # print(q.get())
 
 test3()
 

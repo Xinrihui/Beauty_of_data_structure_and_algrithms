@@ -13,6 +13,7 @@ class Entity(object):
         self.value = value
 
 import bisect
+from collections import deque
 
 class Node(object):
     '''''B树的节点'''
@@ -60,13 +61,6 @@ class Node(object):
 
         return [flag, idx, l[idx]]
 
-    def find(self, key):
-        '''''通过key查找并返回一个数据实体 (下标,实体)  '''
-        res=self._find_insert_idx(self.entitys,key)
-        if res[0]==False:
-            return  None
-        else:
-            return res[1:]
 
 
     def delete(self, key):
@@ -176,7 +170,7 @@ class BTree(object):
             :param value: 
             :return: 
             """
-            self.length+=1
+
             entity= Entity(key,value)
 
             if self.root:
@@ -202,9 +196,10 @@ class BTree(object):
             res = self.__findNode(key)
             Flag=res[0]
             node=res[1]
+            entity=res[2]
 
             if Flag:
-                return node.find(key)[1].value
+                return entity.value
 
         def isEmpty(self):
             return self.length == 0
@@ -216,7 +211,8 @@ class BTree(object):
             :return:  [Flag , node , entity] 
              其中  Flag ： 若找得到节点 为 True
                   node ： 若找得到，为 Key 对应的节点；若找不到则是 最后一次查找定位的叶子节点
-                  entity：若找得到，为 Key 所在的节点 所 对应的 实体
+                  entity：若找得到，为 Key 所在的节点 所 对应的 实体；若找不到 则为 None
+                  entity_idx 
             """
 
             if self.root:
@@ -227,7 +223,7 @@ class BTree(object):
                     result = current._find_insert_idx(entitys,key)
 
                     if  result[0] : # 说明 找到节点了
-                        return  [True,current,result[2]]
+                        return  [True,current,result[2],result[1]]
 
                     else: # result[0] == False # 说明没找到
                         idx = result[1]
@@ -243,37 +239,68 @@ class BTree(object):
                 entitys = current.entitys
                 result = current._find_insert_idx(entitys, key)
                 if  result[0] : # 说明 找到节点了
-                    return  [True,current,result[2]]
+                    return  [True,current,result[2],result[1]]
 
                 return [False,current,None]
 
+
+
         def delete(self, key):
-            '''通过key删除一个数据项并返回它'''
-            pass
+            """
+            通过key删除一个数据项并返回它
+            此实现 过于简单 与 《算法导论》不符
+            :param key:
+            :return:
+            """
+
+            res = self.__findNode(key)
+            Flag = res[0]
+            node = res[1]
+            entity=res[2]
+            entity_idx=res[3]
+
+            if Flag: #  找到了 key 对应的 node
+
+                del node.entitys[entity_idx]
+
+                child=node
+                j=entity_idx
+                # 删除的 entity 所在的 节点不是 叶子节点时 需要做 树的平衡（找自己的前驱 entity ，把它填在自己的位置）
+                while not child.isLeaf():
+                    node = child
+                    child = child.childs[j]
+                    j, entity = child.delete(child.entitys[-1].key) # 取对应下标 j 的 子节点 中 最大的entity 填入 node 中
+                    node.addEntity(entity)
+
+
+                return entity.value
+
 
         def __merge(self,node):
             pass
 
         def __spilt(self, node):
-            '''
+            """
             分裂一个节点，规则为:
             1、中间的数据项移到父节点
             2、新建一个右兄弟节点，将中间节点右边的数据项移到新节点
-            '''
+            :param node: 
+            :return: 
+            """
 
             middle = len(node.entitys) // 2
 
-            top = node.entitys[middle]
+            top = node.entitys[middle] # 中间的数据项移到父节点
 
             right = Node()
 
-            for e in node.entitys[middle + 1:]:
+            for e in node.entitys[middle + 1:]: #将中间节点右边的数据项移到新节点right
                 right.addEntity(e)
 
-            for n in node.childs[middle + 1:]:
+            for n in node.childs[middle + 1:]: #
                 right.addChild(n)
 
-            node.entitys = node.entitys[:middle]
+            node.entitys = node.entitys[:middle] # 将中间点 左边的数据项 保留在节点 node 中
             node.childs = node.childs[:middle + 1]
 
             parent = node.parent #
@@ -281,6 +308,8 @@ class BTree(object):
             if parent:
                 parent.addEntity(top)
                 parent.addChild(right)
+
+                right.parent = parent # 新增的 right 节点一定要有爸爸
 
                 if len(parent.entitys) > self.size:
                     self.__spilt(parent)
@@ -294,28 +323,51 @@ class BTree(object):
                 node.parent=self.root
                 right.parent=self.root
 
+        # def __repr__(self):
+        #
+        #     return self._draw_tree()
+
+        def _draw_tree(self):
+            """
+            B 树的 可视化
+            :return:
+            """
+            queue = deque()
+            queue.appendleft(self.root)
+
+
+            while len(queue)!=0:
+                L=len(queue)
+                level=[]
+                for i in range(L):
+                    node=queue.pop()
+                    level.append([entity.key for entity in node.entitys])
+
+                    for child in node.childs:
+                        queue.appendleft(child)
+
+                print(level)
 
 
 if __name__ == '__main__':
 
-    t = BTree([(30,'a'),(65,'b'),(99,'c'),(203,'d'),(105,'f')],2)
-    # t.add(30,'a')
+    t = BTree([(30,'a'),(65,'b'),(99,'c'),(203,'d')],4)
+
+    t._draw_tree()
+
+    print()
+    t.add(105, 'f')
+    t._draw_tree()
     print(t.get(105))
-    # t.add(65)
-    # t.add(99)
-    # t.add(203, 'c')
-    # t.add(80)
-    # t.add(10)
-    # t.add(30)
-    # t.add(15, 'python')
-    # t.add(75, 'java')
-    # t.add(85)
-    # t.add(90)
-    # t.add(25)
-    # t.add(35, 'c#')
-    # t.add(50)
-    # t.add(22, 'c++')
-    # t.add(27)
-    # t.add(32)
-    #
-    # print (t.get(15))
+
+    for i in range(5):
+        t.add(i)
+
+    t._draw_tree()
+
+
+    t.delete(2)
+    t._draw_tree()
+    t.delete(99)
+    t._draw_tree()
+
