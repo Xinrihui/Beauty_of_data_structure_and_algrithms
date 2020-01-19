@@ -46,10 +46,15 @@ def test2():
     # l.remove(10)
     # print(l)
 
-test2()
+# test2()
 
+def test3():
 
+    l=[99,203]
+    l.insert(1,105)
+    print(l)
 
+test3()
 
 #3. 二分查找的三种实现:
 # http://kuanghy.github.io/2016/06/14/python-bisect
@@ -106,6 +111,7 @@ def binary_search_bisect(lst, x):
 # print("Recursion:", t1.timeit())
 # print("Loop:", t2.timeit())
 # print("bisect:", t3.timeit())
+
 
 
 ##---- end python tips----##

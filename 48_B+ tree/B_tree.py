@@ -94,11 +94,13 @@ class Node(object):
         result = self._find_insert_idx(self.entitys, entity.key)
 
         if result[0] == False:
+
             idx=result[1]
             l=self.entitys
+
             if idx>=len(l)-1:
                 l.append(entity)
-            elif idx<=0:
+            elif idx< 0:
                 l.insert(0,entity)
             else:
                 l.insert(idx+1,entity)
@@ -148,7 +150,7 @@ class Node(object):
 
             if idx>=len(l)-1:
                 l.append(node)
-            elif idx<=0:
+            elif idx< 0:
                 l.insert(0,node)
             else:
                 l.insert(idx+1,node)
@@ -157,10 +159,14 @@ class Node(object):
 class BTree(object):
         '''B树'''
 
-        def __init__(self, size=6):
+        def __init__(self, key_list,size=2):
             self.size = size
             self.root = None
             self.length = 0
+
+            for key,value in key_list:
+                self.add(key,value)
+
 
         def add(self, key, value=None):
             """
@@ -176,14 +182,14 @@ class BTree(object):
             if self.root:
                 res=self.__findNode(key)
                 Flag=res[0]
-                node=res[1]
+                current=res[1]
                 if Flag: # key 已存在 则更新 value 值
                     res[2].value=value
 
                 else: # key 不存在，则在叶子节点处进行插入
-                    node.addEntity(entity)
-                    if len(node.entitys) > self.size:
-                        self.__spilt(node)
+                    current.addEntity(entity)
+                    if len(current.entitys) > self.size:
+                        self.__spilt(current)
 
             else:# 插入第一个 节点
                 self.root=Node()
@@ -209,8 +215,8 @@ class BTree(object):
             :param key: 
             :return:  [Flag , node , entity] 
              其中  Flag ： 若找得到节点 为 True
-                  node ： 若找得到，为Key 对应的节点；若找不到则是 最后一次查找定位的叶子节点
-                  entity： 若找得到，为 Key 所在的节点 所 对应的 实体
+                  node ： 若找得到，为 Key 对应的节点；若找不到则是 最后一次查找定位的叶子节点
+                  entity：若找得到，为 Key 所在的节点 所 对应的 实体
             """
 
             if self.root:
@@ -254,17 +260,50 @@ class BTree(object):
             1、中间的数据项移到父节点
             2、新建一个右兄弟节点，将中间节点右边的数据项移到新节点
             '''
-            pass
+
+            middle = len(node.entitys) // 2
+
+            top = node.entitys[middle]
+
+            right = Node()
+
+            for e in node.entitys[middle + 1:]:
+                right.addEntity(e)
+
+            for n in node.childs[middle + 1:]:
+                right.addChild(n)
+
+            node.entitys = node.entitys[:middle]
+            node.childs = node.childs[:middle + 1]
+
+            parent = node.parent #
+
+            if parent:
+                parent.addEntity(top)
+                parent.addChild(right)
+
+                if len(parent.entitys) > self.size:
+                    self.__spilt(parent)
+
+            else: #没有父母
+                self.root = Node() # 建立新的根节点
+                self.root.addEntity(top)
+                self.root.addChild(node)
+                self.root.addChild(right)
+
+                node.parent=self.root
+                right.parent=self.root
+
 
 
 if __name__ == '__main__':
 
-    t = BTree(4)
-    t.add(20,'a')
-    print(t.get(20))
-    # t.add(40)
-    # t.add(60)
-    # t.add(70, 'c')
+    t = BTree([(30,'a'),(65,'b'),(99,'c'),(203,'d'),(105,'f')],2)
+    # t.add(30,'a')
+    print(t.get(105))
+    # t.add(65)
+    # t.add(99)
+    # t.add(203, 'c')
     # t.add(80)
     # t.add(10)
     # t.add(30)
