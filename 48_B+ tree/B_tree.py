@@ -3,7 +3,7 @@
 
 # B Tree
 # http://dieslrae.iteye.com/blog/1453853
-# http://blog.csdn.net/v_july_v/article/details/6530142
+
 
 class Entity(object):
     '''''数据实体'''
@@ -64,7 +64,11 @@ class Node(object):
 
 
     def delete(self, key):
-        ''''' 通过key删除一个数据实体,并返回它和它的下标(下标,实体) '''
+        """
+        通过key删除一个数据实体,并返回它和它的下标(下标,实体) 
+        :param key: 
+        :return: 
+        """
         res = self._find_insert_idx(self.entitys, key)
         if res[0]==False: # 没有找到
             return  None
@@ -73,7 +77,10 @@ class Node(object):
             return  res[1:]
 
     def isLeaf(self):
-        '''''判断该节点是否是一个叶子节点'''
+        """
+        判断该节点是否是一个叶子节点
+        :return: 
+        """
         return len(self.childs)==0
 
 
@@ -151,7 +158,7 @@ class Node(object):
 
 
 class BTree(object):
-        '''B树'''
+
 
         def __init__(self, key_list,size=2):
             self.size = size
@@ -191,7 +198,11 @@ class BTree(object):
 
 
         def get(self, key):
-            '''通过key查询一个数据'''
+            """
+            通过key查询一个数据
+            :param key: 
+            :return: 
+            """
 
             res = self.__findNode(key)
             Flag=res[0]
