@@ -125,5 +125,12 @@ def binary_search_bisect(lst, x):
 # print("bisect:", t3.timeit())
 
 
+# 4. 数组 标号访问
+def test4():
+    a=[1,0,1]
+    # print(a[0,1]) #TypeError: list indices must be integers or slices, not tuple
+    print(a[ [0,2] ]) #TypeError: list indices must be integers or slices, not list
+test4()
+
 
 ##---- end python tips----##

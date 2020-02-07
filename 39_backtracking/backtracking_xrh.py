@@ -98,7 +98,7 @@ def test1():
             if len(set(indices)) == r: # len(set( ('A','A')))=1
                 yield tuple(pool[i] for i in indices)
 
-    # for ele in permutations('ABC', 2):
+    # for ele in permutations('ABC', 3):
     #     print(ele)
 
 
@@ -154,8 +154,8 @@ def test1():
             yield tuple(pool[i] for i in indices) # (pool[0],pol[2]) ;
                                                   # (pool[1],pol[2])
 
-    for ele in combinations('ABC',2):
-        print(ele) #  ('A', 'B')  ('A', 'C') ('B', 'C')
+    # for ele in combinations('ABC',2):
+    #     print(ele) #  ('A', 'B')  ('A', 'C') ('B', 'C')
 
 
 
@@ -163,7 +163,7 @@ from functools import reduce
 
 def test2():
     """
-    reduce 函数的使用
+   reduce 函数的使用
    reduce把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数，reduce把结果继续和序列的下一个元素做累积计算，其效果就是：
    reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
    
@@ -194,30 +194,29 @@ def test2():
 
 
 
+class solution_zero_one_bag_weight:
 
-def zero_one_bag_weight(weights,capacity):
+    def zero_one_bag_weight(self,weights, capacity):
 
-    L=len(weights)
+        L = len(weights)
 
-    max_bag_weight=0
+        max_bag_weight = 0
 
-    res_bag=()
+        res_bag = ()
 
-    for l in range(1,L+1):
-        # 遍历 背包的 中的物品件数 l=1, l=2, l=3
+        for l in range(1, L + 1):
+            # 遍历 背包的 中的物品件数 l=1, l=2, l=3
 
-        for bag in itertools.combinations(weights, l): # 背包中的物品件数 为l 时，列举所有可能的物品的组合
+            for bag in itertools.combinations(weights, l):  # 背包中的物品件数 为l 时，列举所有可能的物品的组合
 
-            bag_weight=sum( map( lambda x:x[1] , bag ) ) # 背包中 所有物品的重量求和
-            print('bag:',bag,' weight: ',bag_weight)
+                bag_weight = sum(map(lambda x: x[1], bag))  # 背包中 所有物品的重量求和
+                print('bag:', bag, ' weight: ', bag_weight)
 
-            if bag_weight>max_bag_weight and bag_weight <= capacity:
-                max_bag_weight=bag_weight
-                res_bag=bag
+                if bag_weight > max_bag_weight and bag_weight <= capacity:
+                    max_bag_weight = bag_weight
+                    res_bag = bag
 
-    return max_bag_weight,res_bag
-
-class solution:
+        return max_bag_weight, res_bag
 
     def zero_one_bag_weight_recursive(self,weights,capacity):
         self.weights=weights
@@ -227,7 +226,7 @@ class solution:
         self.res_bag=()
 
         current_bag=[]
-        self.__process(-1,current_bag)
+        self.__process(-1,current_bag) #current_bag 表示当前已经装进去的物品；i表示考察到哪个物品了；
 
         return self.max_bag_weight,self.res_bag
 
@@ -237,10 +236,10 @@ class solution:
 
             bag_weight = sum(map(lambda x: x[1], current_bag))
 
-            if bag_weight > self.capacity:
+            if bag_weight > self.capacity: #搜索剪枝: 当发现已经选择的物品的重量超过 Wkg 之后，我们就停止继续探测剩下的物品
                 return
 
-            # print(current_bag)
+            # print('bag:', current_bag, ' weight: ', bag_weight)
 
             if bag_weight >self.max_bag_weight:
                 self.max_bag_weight=bag_weight
@@ -251,16 +250,207 @@ class solution:
 
 
 
+class solution_pattern_match:
+
+    def match(self,pattern,text):
+
+        self.pattern=pattern # 正则表达式
+        self.text=text # 待匹配的字符串
+
+        self.pattern_len=len(pattern)
+        self.text_len=len(text)
+
+        pattern_j=0
+        text_i=0
+
+        self.match_flag=False
+
+        self.__process(text_i,pattern_j)
+
+        return self.match_flag
+
+    def __process(self,text_i,pattern_j):
+
+        if self.match_flag == True: #如果已经匹配了，就不要继续递归了
+            return
+
+        if text_i==self.text_len:
+            if pattern_j == self.pattern_len:
+                # pattern 和 text 都到了末尾，说明模式匹配成功
+                self.match_flag = True
+                return
+
+        if text_i<self.text_len and pattern_j< self.pattern_len: #保证数组不越界
+
+            if self.pattern[pattern_j]=='*' :
+                for index in range(text_i,self.text_len+1):  # 为了让指针 指向 text的末尾 ，self.text_len+1
+                    # '*' 可以匹配任意个数的字符
+                    #递归 检查 从text 的当前指针指向的位置 到 text 的末尾 与 pattern_j+1 的匹配
+                    self.__process(index, pattern_j+1)
+
+            elif self.pattern[pattern_j]=='?' :
+                self.__process(text_i, pattern_j + 1) # 匹配0个字符
+                self.__process(text_i+1, pattern_j + 1) #匹配1个字符
+
+            else: # self.pattern[pattern_j] 为普通字符
+                if self.text[text_i]==self.pattern[pattern_j]:
+                    self.__process(text_i + 1, pattern_j + 1)
+
+class solution_Traveling_Salesman_Problem:
+
+    def tsp_recursive(self,city_distance,start_point):
+        """
+        递归+剪枝 解 旅行推销员问题
+        ref: https://www.cnblogs.com/dddyyy/p/10084673.html
+        :param city_distance: 城市的距离矩阵
+        :param start_point:  起点城市
+        :return: 
+        """
+
+        self.city_distance=city_distance
+        self.city_names=list(range(len(city_distance)))
+
+        self.start_point=start_point
+
+        self.min_cost=float('inf') # 取一个足够大的数 作为初始的 最小路径代价
+        self.min_cost_path=[]
+
+        self.path_length=len(city_distance)+1 # path_length=5
+
+        stage = 0  # stage0：把起始的点 放入 当前路径中
+        current_path=[start_point]
+        current_cost=0
+
+        self.__process(stage+1,current_path,current_cost)
+
+        return self.min_cost,self.min_cost_path
+
+    def __process(self,stage,current_path,current_cost):
+
+        if stage < self.path_length-1: # stage1-stage3
+
+            if current_cost >= self.min_cost:
+                return
+
+            # print(current_path)
+            for next_city in set(self.city_names)-set(current_path): # 每个城市只会访问一次，从没走过的城市中选一个访问
+
+                current_city=current_path[-1]
+                cost= current_cost + self.city_distance[current_city][next_city] # 路径代价为：当前的路径代价 + 现在所在城市到下一个城市的距离
+                self.__process(stage + 1, current_path+[next_city],cost)
+
+        elif stage==self.path_length-1: #stage4: 最后要回到 起点
+
+            cost = current_cost + self.city_distance[current_path[-1]][self.start_point]
+            current_path=current_path+[self.start_point] # 把 起始节点 加到路径的末尾
+            if cost < self.min_cost: #
+                self.min_cost=cost
+                self.min_cost_path=current_path
+
+
+
+class solution_Graph_Coloring_Problem():
+
+    def mGCP(self,mapGraph,m):
+        """
+        递归 解 图的 m 着色 问题
+        ref: https://blog.csdn.net/duyujian706709149/article/details/80581921
+        :param mapGraph: 
+        :param m: 
+        :return: 
+        """
+
+        self.mapGraph=mapGraph
+        self.colors= list(range(1,m+1))
+        self.stageNum= len(mapGraph) # stageNum=5
+
+        self.flag=False
+        self.res_colors=[]
+
+        #stage0: 初始节点 可以选择 所有颜色中的任意一种颜色上色
+        stage=0
+        current_colors=[]
+        for color in self.colors:
+
+            self._process( stage+1 ,current_colors+[color])
+
+        return self.flag,self.res_colors
+
+    def _process(self,stage,current_colors):
+
+        if self.flag:
+            return
+
+        if stage < self.stageNum:  # stage1-stage4
+
+            node=stage # 当前待上色的节点
+            adjacent_nodes=self.mapGraph[node] #待上色节点的 相邻节点
+            adjacent_nodes=adjacent_nodes[:len(current_colors)] #相邻节点中 截取 已经上过色的节点
+
+            adjacent_nodes_colors=[ current_colors[index] for index,node in enumerate(adjacent_nodes) if node==1] #已经上过色的节点的颜色集合
+
+            available_colors=set(self.colors)-set(adjacent_nodes_colors) #当前待上色的节点的可选颜色
+
+            for color in available_colors:
+                self._process(stage + 1, current_colors + [color])
+
+
+        elif stage== self.stageNum: #stage5: 进入 该stage 说明 所有节点都已经成功上色
+            self.flag=True
+            self.res_colors=current_colors
+
+
+
 if __name__ == '__main__':
 
     # test()
     # test1()
     # test2()
 
+    sol = solution_zero_one_bag_weight()
     items_info = [('a',2),('b',2), ('c',4), ('d',6), ('e',7)]
     capacity = 14
-    print(zero_one_bag_weight(items_info, capacity))
-
-    sol=solution()
+    print(sol.zero_one_bag_weight(items_info, capacity))
     print(sol.zero_one_bag_weight_recursive(items_info, capacity))
+
+
+    sol2=solution_pattern_match()
+    pattern='a*d'
+    text='abcd'
+    # print(sol2.match(pattern,text))
+    # print(sol2.match('a*d?f', 'abcdef'))
+    # print(sol2.match('', 'ab'))
+    # print(sol2.match('a*', 'ab'))
+    # print(sol2.match('a?', 'ab'))
+    # print(sol2.match('*', 'ab'))
+    # print(sol2.match('?', 'a'))
+    # print(sol2.match('**', 'ab'))
+    # print(sol2.match('??', 'ab'))
+
+
+
+    city_distance = [
+        [0, 4, 3, 1],
+        [4, 0, 1, 2],
+        [3, 1, 0, 5],
+        [1, 2, 5, 0],
+    ]
+    sol3=solution_Traveling_Salesman_Problem()
+    # print(sol3.tsp_recursive(city_distance,0))
+
+
+    mapGraph = [
+        [0, 1, 1, 1, 0],
+        [1, 0, 1, 1, 1],
+        [1, 1, 0, 1, 0],
+        [1, 1, 1, 0, 1],
+        [0, 1, 0, 1, 0]
+    ]
+    sol4 = solution_Graph_Coloring_Problem()
+    # print(sol4.mGCP(mapGraph, 4))
+    # print(sol4.mGCP(mapGraph, 3))
+
+
+
+
 
