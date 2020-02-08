@@ -210,7 +210,7 @@ class solution_zero_one_bag_weight:
             for bag in itertools.combinations(weights, l):  # 背包中的物品件数 为l 时，列举所有可能的物品的组合
 
                 bag_weight = sum(map(lambda x: x[1], bag))  # 背包中 所有物品的重量求和
-                print('bag:', bag, ' weight: ', bag_weight)
+                # print('bag:', bag, ' weight: ', bag_weight)
 
                 if bag_weight > max_bag_weight and bag_weight <= capacity:
                     max_bag_weight = bag_weight
@@ -239,7 +239,7 @@ class solution_zero_one_bag_weight:
             if bag_weight > self.capacity: #搜索剪枝: 当发现已经选择的物品的重量超过 Wkg 之后，我们就停止继续探测剩下的物品
                 return
 
-            # print('bag:', current_bag, ' weight: ', bag_weight)
+            print('bag:', current_bag, ' weight: ', bag_weight)
 
             if bag_weight >self.max_bag_weight:
                 self.max_bag_weight=bag_weight
@@ -409,7 +409,7 @@ if __name__ == '__main__':
 
     sol = solution_zero_one_bag_weight()
     items_info = [('a',2),('b',2), ('c',4), ('d',6), ('e',7)]
-    capacity = 14
+    capacity = 9
     print(sol.zero_one_bag_weight(items_info, capacity))
     print(sol.zero_one_bag_weight_recursive(items_info, capacity))
 
