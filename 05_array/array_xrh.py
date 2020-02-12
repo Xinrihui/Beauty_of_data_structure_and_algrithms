@@ -12,7 +12,7 @@ def delete_element(arr):
 
 
 #2. 数组切片的赋值问题
-def test_1():
+def test1():
     a=[1,2,3]
     a=a[0:2]+[5]+a[1:]
     print(a)
@@ -26,7 +26,7 @@ def test_1():
     c.extend([6])
     print(c)
 
-# test_1()
+# test1()
 
 #2.bisect 的使用
 import  bisect
@@ -66,7 +66,7 @@ def test3():
     # q = Queue([99,203])
     # print(q.get())
 
-test3()
+# test3()
 
 #3. 二分查找的三种实现:
 # http://kuanghy.github.io/2016/06/14/python-bisect
@@ -130,7 +130,30 @@ def test4():
     a=[1,0,1]
     # print(a[0,1]) #TypeError: list indices must be integers or slices, not tuple
     print(a[ [0,2] ]) #TypeError: list indices must be integers or slices, not list
-test4()
+# test4()
+
+
+# 5.稀疏矩阵
+import numpy as np
+import scipy.sparse as sp
+def test5():
+    A = np.array([[1, 0, 2, 0],
+                  [0, 0, 0, 0],
+                  [3, 0, 0, 0],
+                  [1, 0, 0, 4]])
+
+    A_row = sp.csr_matrix(A)
+
+    print(A_row)
+
+    print()
+    A_col= sp.csc_matrix(A)
+    print(A_col)
+
+
+
+test5()
+
 
 
 ##---- end python tips----##

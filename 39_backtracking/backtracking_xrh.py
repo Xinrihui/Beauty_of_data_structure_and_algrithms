@@ -226,13 +226,13 @@ class solution_zero_one_bag_weight:
         self.res_bag=()
 
         current_bag=[]
-        self.__process(-1,current_bag) #current_bag 表示当前已经装进去的物品；i表示考察到哪个物品了；
+        self.__process(0,current_bag) #current_bag 表示当前已经装进去的物品；i表示考察到哪个物品了；
 
         return self.max_bag_weight,self.res_bag
 
     def __process(self,i,current_bag):
 
-        if i < len(self.weights):
+        if i <= len(self.weights):
 
             bag_weight = sum(map(lambda x: x[1], current_bag))
 
@@ -246,7 +246,9 @@ class solution_zero_one_bag_weight:
                 self.res_bag = current_bag
 
             self.__process(i+1,current_bag) # 第i 个物品不放入背包
-            self.__process(i + 1, current_bag+[self.weights[i]]) # 第i 个物品 放入背包
+
+            if i < len(self.weights):
+                self.__process(i + 1, current_bag+[self.weights[i]]) # 第i 个物品 放入背包
 
 
 
@@ -408,7 +410,7 @@ if __name__ == '__main__':
     # test2()
 
     sol = solution_zero_one_bag_weight()
-    items_info = [('a',2),('b',2), ('c',4), ('d',6), ('e',7)]
+    items_info = [('a',2),('b',2), ('c',4), ('d',6), ('e',3)]
     capacity = 9
     print(sol.zero_one_bag_weight(items_info, capacity))
     print(sol.zero_one_bag_weight_recursive(items_info, capacity))
