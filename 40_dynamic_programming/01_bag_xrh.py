@@ -134,7 +134,7 @@ class solution_zero_one_bag_weight:
         动态规划法v3 解 01背包问题：
         （1） 进一步降低 空间复杂度: O(2w) -> O(w)，
          (2) 降低时间复杂度: 对 states 的列的遍历 做 剪枝
-         (3) 对 states 的列的遍历 j 需要从大到小来处理。如果我们按照 j 从小到大处理的话，会出现 for 循环重复计算的问题。
+         (3) 当重复使用一个 states 时，对 states 的列的遍历 j 需要从大到小来处理。如果我们按照 j 从小到大处理的话，会出现 for 循环重复计算的问题。
 
         ref: https://time.geekbang.org/column/article/74788 
         :param weights: 
@@ -146,12 +146,12 @@ class solution_zero_one_bag_weight:
         row_num = len(weights)
         col_num = capacity + 1
 
+        # 对状态0 特殊处理：
         states[0] = 1
         if weights[0] < capacity + 1:
             states[weights[0]] = 1  # 第0个物品放入背包
 
-        for i in range(1,row_num):
-
+        for i in range(1,row_num): # 从状态1开始
             col_end=capacity-(weights[i]) # 剪枝: 大于col_end 的j 不用考虑，因为 j + weights[i] 必然大于 背包的容量
             for j in range(col_end,-1,-1):
                 if states[j] == 1:
@@ -255,7 +255,6 @@ class  solution_double11advance:
     def run_dynamic_programming_v3(self, prices, condition):
         """
         空间复杂度： O(w) 
-        
         :param prices: 各个商品的价格
         :param condition: 满减的条件
         :return: 选择的商品方案
@@ -277,13 +276,13 @@ class  solution_double11advance:
 
         for i in range(1, row_num):  # 从第1个状态开始
 
-            col_end = capacity - (prices[i])  # 剪枝: 大于col_end 的j 不用考虑，因为 j + weights[i] 必然大于 背包的容量
+            col_end = capacity - (prices[i])  # 剪枝
             for j in range(col_end, -1, -1):
                 if states[j] == 1:
                     states[j + prices[i]] = 1  # 第i个物品放入背包
 
             bag_states.append([index for index in range(capacity + 1) if
-                               states[index] != 0])  # 记录 各个状态i 下 背包的总价
+                               states[index] != 0])  # 记录 各个状态i 下 背包的总价的所有情况
 
         print(bag_states)  #
         print('bag_states memory_size:', sys.getsizeof(bag_states))
@@ -316,6 +315,87 @@ class  solution_double11advance:
                 if bag_price == prices[i]:
                     bag.append(i)
 
+
+        return min_price, bag
+
+    def run_dynamic_programming_v4(self, prices, condition):
+        """
+        存储 动态规划 状态的数组 过于稀疏，尝试用其他数据结构  dict 替代 数组，进一步降低内存占用
+        空间复杂度： 与 condition 的大小无关
+        
+        与v3 对比 bag_states 的内存空间：
+         v3 states memory_size: 3300 
+         v4 dict states memory_size: 1184
+         
+        :param prices: 各个商品的价格
+        :param condition: 满减的条件
+        :return: 选择的商品方案
+        """
+        capacity = condition * 2
+
+        states = {}
+
+        print('dict states(None) memory_size:', sys.getsizeof(states))
+
+        print(' prices memory_size:', sys.getsizeof(prices))
+
+        row_num = len(prices)
+        col_num = condition + 1
+
+        bag_states = []
+
+        for i in range(row_num):  # 从第0个状态开始
+
+            next_states = {}
+
+            next_states[0] = 1  # 第i个物品 不放入背包
+
+            if prices[i] < capacity:
+                next_states[prices[i]] = 1  # 背包中 只有 第i个物品
+
+            for j in range(col_num):
+                if states.get(j)==1:
+                    next_states[j] = 1  # 第i个物品 不放入背包
+
+                    if j + prices[i] < capacity + 1:
+                        next_states[j + prices[i]] = 1  # 第i个物品放入背包
+
+            states = next_states
+
+            bag_states.append(states.keys())  # 记录 各个状态i 下 背包的总价
+
+        print('dict states memory_size:', sys.getsizeof(states))
+
+        print(bag_states)  #
+        print('bag_states memory_size:', sys.getsizeof(bag_states))
+
+        min_price = 0
+        for i in range(condition, capacity + 1):  # 满减问题中，我们要找 大于等于 200（满减条件）的值中最小的
+            if states.get(i)==1:
+                min_price = i
+                break
+
+        # 根据背包中物品的总价，反推出 背包中的物品
+        bag = []
+        bag_price = min_price
+
+        for i in range(row_num - 1, -1, -1):
+            if i > 0:
+                if bag_price - prices[i] in bag_states[i - 1]:
+                    # case1: 第i个物品装入背包
+                    # 1.bag_states[i-1] 上一个状态 背包的 总价的情况
+                    # 3. (当前背包的重量 - 第i个物品的价格) 为 上一个状态的 背包的总价 则说明 第i 个物品被放入背包
+
+                    bag.append(i)
+                    bag_price = bag_price - prices[i]
+
+                else:
+                    # case2: 第i个物品未装入背包,背包的总价不变
+                    pass
+
+            elif i == 0:
+                if bag_price == prices[i]:
+                    bag.append(i)
 
         return min_price, bag
 
@@ -482,8 +562,11 @@ if __name__ == '__main__':
 
     prices=[10,20,400,100,50,60]
     sol3=solution_double11advance()
-    print(sol3.run_dynamic_programming_v2(prices,200))
 
+    # print(sol3.run_dynamic_programming_v3(prices,200))
+    # print(sol3.run_dynamic_programming_v4(prices, 200))
+    print(sol3.run_dynamic_programming_v3(prices,400))
+    print(sol3.run_dynamic_programming_v4(prices, 400))
 
 
 

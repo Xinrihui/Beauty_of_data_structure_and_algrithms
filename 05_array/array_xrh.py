@@ -3,7 +3,8 @@
 #1.循环遍历删除满足条件的元素
 
 def delete_element(arr):
-    for ele in range(len(arr)-1,-1,-1):
+    L=len(arr)
+    for ele in range(L-1,-1,-1):
         if arr[ele] ==2:
             del arr[ele]
     return arr
@@ -136,23 +137,135 @@ def test4():
 # 5.稀疏矩阵
 import numpy as np
 import scipy.sparse as sp
+import sys
+
 def test5():
-    A = np.array([[1, 0, 2, 0],
-                  [0, 0, 0, 0],
-                  [3, 0, 0, 0],
-                  [1, 0, 0, 4]])
+    # A = np.array([[1, 0, 2, 0],
+    #               [0, 0, 0, 0],
+    #               [3, 0, 0, 0],
+    #               [1, 0, 0, 4]])
+    #
+    # A_row = sp.csr_matrix(A)
+    #
+    # print(A_row)
+    #
+    # print()
+    # A_col= sp.csc_matrix(A)
+    # print(A_col)
 
-    A_row = sp.csr_matrix(A)
+    a={}
+    a[0]='a'
+    print(a)
+    print('memory_size:', sys.getsizeof(a))
+    a[1] = 'b'
+    print(a)
+    print('memory_size:', sys.getsizeof(a))
 
-    print(A_row)
+# 浮点运算
+def test6():
+    b=1.5e-20
+    print(b*10)
 
-    print()
-    A_col= sp.csc_matrix(A)
-    print(A_col)
+    print(9/3)
+    print( 10.0/3 ) #3.3333333333333335
+    print(20 / 6)
+    print( 20 // 6)
+    print( (10.0/3)==(20.0/6))
 
 
 
-test5()
+from collections import *
+
+# 可变和不可变对象
+def test7():
+    a = '  ABC  '
+    b = a
+    a=a.strip()
+    print(b)
+    print(a)
+
+    c=['a','b']
+    d=c
+    c.append('c')
+    print(d)
+    print(c)
+
+# hash 表:  defaultdict
+def test8():
+    str1 = 'mississippi'
+    dict_int = defaultdict(int)
+    for s in str1:
+        dict_int[s] += 1
+    print(sorted(dict_int.items()))
+
+    for (k, v) in dict_int.items():
+        print( k,v)
+
+    dic = {'a': 31, 'bc': 5, 'c': 3, 'asd': 4, 'aa': 74, 'd': 0}
+    l = sorted(dic.items(), key=lambda d: d[1], reverse=True)
+    print(l)
+
+    items = (
+        ('A', 1),
+        ('B', 2),
+        ('C', 3)
+    )
+
+    regular_dict = dict(items)
+    ordered_dict = OrderedDict(items)
+
+    print('Regular Dict:')
+    for k, v in regular_dict.items():
+        print(k, v)
+
+
+    print('Ordered Dict:')
+    for k, v in ordered_dict.items():
+        print(k, v)
+
+
+def test9():
+    l = ['red', 'blue', 'red', 'green', 'blue', 'blue']
+    cnt = Counter(l)
+    print(cnt)  #'blue': 3, 'red': 2, 'green': 1}
+    print(cnt['blue']) # 3
+
+    import re
+    words = re.findall(r'\w+', open('hamlet.txt').read().lower())
+
+    print(Counter(words).most_common(3)) #[('the', 18), ('of', 11), ('to', 10)]
+
+
+
+
+
+def test10():
+    N = 9
+    # 1. string to list
+    board = ["..9748...", "7........", ".2.1.9...", "..7...24.", ".64.1.59.", ".98...3..", "...8.3.2.", "........6",
+             "...2759.."]
+    for j in range(N):
+        one_row = board[j]
+        board[j] = list(one_row)
+    print(board)
+
+    # 2. list to np.array
+    board = np.array(board)
+    print(board)
+    #----------------------
+    # 3. array to list
+    board = board.tolist()
+    print(board)
+
+    # 4. list to string
+    for j in range(N):
+        one_row = (board[j])
+        # print one_row
+        board[j] = "".join(one_row)
+    print(board)
+
+
+test8()
 
 
 
