@@ -6,7 +6,7 @@ from typing import List
 
 def longest_increasing_subsequence(nums: List[int]) -> int:
     """
-    最长子上升序列的一种DP解法，从回溯解法转化，思路类似于有限物品的背包问题
+    最长子上升序列的一种 DP解法，从回溯解法转化，思路类似于有限物品的背包问题
     每一次决策都算出当前可能的lis的长度，重复子问题合并，合并策略是lis的末尾元素最小
     时间复杂度：O(n^2)
     空间复杂度：O(n^2)，可优化至O(n)

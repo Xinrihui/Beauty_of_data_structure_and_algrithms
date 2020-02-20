@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import itertools
+from numpy import *
 
 def test():
     """
@@ -349,6 +350,90 @@ class solution_Traveling_Salesman_Problem:
                 self.min_cost=cost
                 self.min_cost_path=current_path
 
+    def tsp_dp(self, city_distance,start_city=0):
+        """
+        动态规划 解 旅行商问题
+        
+        ref: https://blog.csdn.net/qq_39559641/article/details/101209534
+        :param city_distance: 
+        :param start_city:  
+        :return: 
+        """
+        N=len(city_distance) # 城市的数目 5
+
+        # M= pow(2,N-1) # N-1=4
+        # states = zeros((N, M), dtype=int)
+
+        states_dist={} #记录 到达状态的最短距离
+
+        states_prev_node={} # 记录 到达该状态的 最佳的上一个状态
+
+        city_set= set(list(range(N)))
+
+        mid_city_set=city_set-set([start_city]) #{1,2,3,4}
+        # print(mid_city_set)
+
+        for V_length in range(0,N-1): # 0,1,2,3
+
+            for mid_start in  mid_city_set:
+
+                for V in itertools.combinations(mid_city_set-set([mid_start]), V_length):# 取组合
+
+                    print(mid_start ,V) # mid_start=4, V=()
+                                        # mid_start=3, V=(4,)
+                                        # mid_start=2, V=(3, 4)
+
+                    if len(V)==0:
+                        states_dist[(mid_start, V)] = city_distance[mid_start][start_city]
+                        states_prev_node[(mid_start, V)]=None
+                    else:
+                        min_dist=float('inf')
+                        min_node=None
+
+                        for city in V:
+
+                            v=tuple( sorted(set(V)-set([city])) ) # TODO: sorted( set(V)-set([city]) )
+                            dist=city_distance[mid_start][city]+states_dist[(city,v)]
+                            if dist<min_dist:
+                                min_dist=dist
+                                min_node=(city, v)
+
+                        states_dist[(mid_start,V)]=min_dist
+                        states_prev_node[(mid_start,V)]=min_node
+
+
+        print(start_city ,tuple(mid_city_set) ) #求原问题的解 d(start_city=0,mid_city_set={1, 2, 3, 4})
+        min_dist = float('inf')
+        min_node = None
+        for city in mid_city_set:
+
+            v = tuple(sorted(set(mid_city_set) - set([city])))
+
+            dist = city_distance[start_city][city] + states_dist[(city, v)]
+            if dist < min_dist:
+                min_dist = dist
+                min_node = (city, v)
+
+        states_dist[(start_city ,tuple(mid_city_set) )] = min_dist
+        states_prev_node[(start_city ,tuple(mid_city_set))] = min_node
+
+        print(states_dist)
+        print(states_prev_node)
+
+        #反向推出 最短路径 经过的节点
+        path=[start_city]
+        prev_node=(start_city ,tuple(mid_city_set))
+        for i in range(N-1):
+
+            node=states_prev_node[prev_node]
+            path.append(node[0])
+            prev_node=node
+
+        path.append(start_city)
+
+        return min_dist,path
+
+
 
 
 class solution_Graph_Coloring_Problem():
@@ -412,8 +497,8 @@ if __name__ == '__main__':
     sol = solution_zero_one_bag_weight()
     items_info = [('a',2),('b',2), ('c',4), ('d',6), ('e',3)]
     capacity = 9
-    print(sol.zero_one_bag_weight(items_info, capacity))
-    print(sol.zero_one_bag_weight_recursive(items_info, capacity))
+    # print(sol.zero_one_bag_weight(items_info, capacity))
+    # print(sol.zero_one_bag_weight_recursive(items_info, capacity))
 
 
     sol2=solution_pattern_match()
@@ -440,6 +525,18 @@ if __name__ == '__main__':
     sol3=solution_Traveling_Salesman_Problem()
     # print(sol3.tsp_recursive(city_distance,0))
 
+    city_distance2 = [
+        [0, 3, float('inf'), 8, 9],
+        [3, 0, 3, 10, 5],
+        [float('inf'), 3, 0, 4, 3],
+        [8 , 10, 4, 0, 20],
+        [9, 5, 3, 20 , 0],
+    ]
+    print(sol3.tsp_dp(city_distance2,0)) #
+    # print(sol3.tsp_dp(city_distance2, 1))
+    # print(sol3.tsp_dp(city_distance2, 2))
+    # print(sol3.tsp_dp(city_distance2, 3))
+    # print(sol3.tsp_dp(city_distance2, 4))
 
     mapGraph = [
         [0, 1, 1, 1, 0],

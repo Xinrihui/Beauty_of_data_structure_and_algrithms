@@ -265,8 +265,24 @@ def test10():
     print(board)
 
 
-test8()
+# test8()
 
+
+def test11():
+
+    dic={}
+
+    a=0
+    b=tuple(set([1,2]))
+    # print(b)
+
+    # c=(a,b)
+    # print(c)
+
+    dic[(a,b)]=100
+    print(dic[(a,b)])
+
+test11()
 
 
 ##---- end python tips----##

@@ -323,9 +323,9 @@ class  solution_double11advance:
         存储 动态规划 状态的数组 过于稀疏，尝试用其他数据结构  dict 替代 数组，进一步降低内存占用
         空间复杂度： 与 condition 的大小无关
         
-        与v3 对比 bag_states 的内存空间：
-         v3 states memory_size: 3300 
-         v4 dict states memory_size: 1184
+        对比 bag_states 的内存空间：
+         v3 :states memory_size: 3300 
+         v4 :dict states memory_size: 1184
          
         :param prices: 各个商品的价格
         :param condition: 满减的条件
@@ -565,7 +565,7 @@ if __name__ == '__main__':
 
     # print(sol3.run_dynamic_programming_v3(prices,200))
     # print(sol3.run_dynamic_programming_v4(prices, 200))
-    print(sol3.run_dynamic_programming_v3(prices,400))
+    # print(sol3.run_dynamic_programming_v3(prices,400))
     print(sol3.run_dynamic_programming_v4(prices, 400))
 
 
