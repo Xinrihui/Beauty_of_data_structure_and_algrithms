@@ -401,8 +401,8 @@ class solution_Traveling_Salesman_Problem:
                         states_dist[(mid_start,V)]=min_dist
                         states_prev_node[(mid_start,V)]=min_node
 
-
-        print(start_city ,tuple(mid_city_set) ) #求原问题的解 d(start_city=0,mid_city_set={1, 2, 3, 4})
+        # 求原问题的解 d(start_city=0,mid_city_set={1, 2, 3, 4})
+        print(start_city ,tuple(mid_city_set) )
         min_dist = float('inf')
         min_node = None
         for city in mid_city_set:
