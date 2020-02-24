@@ -42,6 +42,55 @@ class Solution1(object):
 
         return
 
+
+    def in_order_depreatured(self,root):
+        """
+        非递归 实现树的中序遍历
+        :param root: 
+        :return: 
+        """
+        stack=[root]
+        p=root
+        res=[]
+
+        while len(stack)!=0 :
+
+            while (p!=None) and (p.left!=None) and (p.val not in res): #访问过的节点不要再入栈
+                p = p.left
+                stack.append(p)
+
+            p=stack.pop()
+            res.append(p.val)
+
+            if p.right!=None:
+                p=p.right
+                stack.append(p)
+
+        return res
+
+    def in_order(self, root):
+        """
+        非递归 实现树的中序遍历
+        :param root: 
+        :return: 
+        """
+        stack = []
+        p = root
+        res = []
+
+        while p!=None or len(stack)!=0:
+
+            if p!=None: # p 不为空就入栈
+                stack.append(p)
+                p=p.left #指向左节点
+
+            else: # 如果p 为空就弹出
+                p=stack.pop() # 访问中间节点
+                res.append(p.val)
+                p=p.right  # 指针指向右子树
+
+        return res
+
     def _depth_recursion(self,root):
         if root is None:
             return 0
@@ -220,8 +269,9 @@ if __name__ == "__main__":
     solution=Solution1()
     root=solution.buildTree(preorder,inorder)
     # solution.pre_order(root)
-    print(solution._depth(root))
-    print(solution._depth_recursion(root))
+    print(solution.in_order(root))
+    # print(solution._depth(root))
+    # print(solution._depth_recursion(root))
 
     #solution2
     # tree_array=[None,'A','B','C','D',None,'E',None,'F','G',None,None,None,'H']

@@ -282,7 +282,61 @@ def test11():
     dic[(a,b)]=100
     print(dic[(a,b)])
 
-test11()
+# test11()
+from numpy import *
 
+def test12():
+    a=[[2, 6], [1, 4], [3, 6], [3, 7], [6, 8], [2, 4], [3, 5]]
+    a=array(a)
+
+    b=list(map(lambda x: x[0], a))
+    print(b)
+
+    c=2
+    def smaller_than(n):
+        return n[0]<=c
+
+    print( list( filter(lambda t:t[0]<c,a)))
+
+
+
+# test12()
+
+import heapq
+def test13():
+
+    char_list=[('a',45),('b',13),('c',12),('d',16),('e',9),('f',5)]
+
+    # char_list = list(map(lambda x: (x[1], x[0]), char_list))
+
+    # h=[]
+    # for ele in char_list:
+    #     heapq.heappush(h,ele)
+
+    # heapq.heapify(char_list)
+    # h=char_list
+    #
+    # print(h)
+    # print([heapq.heappop(h) for i in range(len(h))])
+
+    class ComapreHeap(object):
+        def __init__(self, initial=None, key=lambda x: x):
+            self.key = key
+            if initial:
+                self._data = [(key(item), item) for item in initial]
+                heapq.heapify(self._data)
+            else:
+                self._data = []
+
+        def push(self, item):
+            heapq.heappush(self._data, (self.key(item), item))
+
+        def pop(self):
+            return heapq.heappop(self._data)[1]
+
+    h=ComapreHeap(char_list,  key=lambda x:x[1])
+    print([ h.pop() for i in range(len(char_list))])
+
+test13()
 
 ##---- end python tips----##
