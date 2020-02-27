@@ -44,7 +44,9 @@ def merge(nums, start, mid, end):
 if __name__ == '__main__':
     print('--- count inversion number using merge sort ---')
     # nums = [5, 0, 4, 2, 3, 1, 6, 8, 7]
-    nums = [5, 0, 4, 2, 3, 1, 3, 3, 3, 6, 8, 7]
+    # nums = [5, 0, 4, 2, 3, 1, 3, 3, 3, 6, 8, 7]
+
+    nums=[2, 4, 3, 1, 5, 6]
     print('nums  : {}'.format(nums))
     merge_sort_counting(nums, 0, len(nums)-1)
     print('sorted: {}'.format(nums))

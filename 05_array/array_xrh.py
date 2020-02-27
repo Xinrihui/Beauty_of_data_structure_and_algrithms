@@ -27,6 +27,9 @@ def test1():
     c.extend([6])
     print(c)
 
+    c[0],c[1]=c[1],c[0]
+    print(c)
+
 # test1()
 
 #2.bisect 的使用
@@ -172,6 +175,11 @@ def test6():
     print( 20 // 6)
     print( (10.0/3)==(20.0/6))
 
+    # t=2
+    # print( 2<=t<=3)
+
+# test6()
+
 
 
 from collections import *
@@ -234,9 +242,6 @@ def test9():
     words = re.findall(r'\w+', open('hamlet.txt').read().lower())
 
     print(Counter(words).most_common(3)) #[('the', 18), ('of', 11), ('to', 10)]
-
-
-
 
 
 def test10():
@@ -337,6 +342,8 @@ def test13():
     h=ComapreHeap(char_list,  key=lambda x:x[1])
     print([ h.pop() for i in range(len(char_list))])
 
-test13()
+# test13()
 
 ##---- end python tips----##
+
+print(2**3)
