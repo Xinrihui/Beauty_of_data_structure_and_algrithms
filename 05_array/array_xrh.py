@@ -287,7 +287,11 @@ def test11():
     dic[(a,b)]=100
     print(dic[(a,b)])
 
-# test11()
+    a={}
+    a[0]=1
+    print(a[2])
+
+test11()
 from numpy import *
 
 def test12():
@@ -346,4 +350,4 @@ def test13():
 
 ##---- end python tips----##
 
-print(2**3)
+

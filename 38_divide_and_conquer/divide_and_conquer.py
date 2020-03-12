@@ -5,9 +5,9 @@ import timeit
 import numpy as np
 
 import math
-import random
 
 import random as rand
+
 class solutions:
 
     def inversion_regions(self,nums):
@@ -56,14 +56,16 @@ class solutions:
 
     def __merge_sort(self,left,right):
 
-        if right>left: # 划重点！
+        if right>left: # 划重点！递归注意递归退出条件！
 
+            #1.分解和递归：左半边有序 和 右半边有序
             mid = (right + left) // 2 # (right + left) 划重点！
 
             self.__merge_sort(left,mid)
             self.__merge_sort(mid+1,right) # mid+1 划重点！ left=0 right=1 mid=0 , self.__process(1 ,1)
             # self.__process(mid , right)  # left=0 right=1 mid=0 会永远陷入 self.__process(0 ,1) 的循环
 
+            #2. 合并：把左半边有序和右半边有序合起来 ，整个序列有序
             self.__merge(left,mid,right)
 
     def __merge(self,left, mid , right):
@@ -103,12 +105,71 @@ class solutions:
         self.nums[left:right+1]=merge_cache
 
     def max_subarray(self,nums):
-        pass
+        """
+        最大子数组问题 （股票问题）
+        
+        :param nums: [-2,1,-3,4,-1,2,1,-5,4]
+        :return: 
+        """
+        if len(nums)==1:
+            return (nums[0],nums)
+
+
+        mid=len(nums)//2
+
+        # 1.分解 和 递归：最大子数组 在 mid 的 左边 或者 右边
+        left_max_val,left_list=self.max_subarray(nums[:mid]) # 左半部分 的 最大子数组的值，和子数组
+        right_max_val,right_list=self.max_subarray(nums[mid:])
+
+        # 2. 中间状况：最大子数组 横跨了mid 的 左边和 右边的元素；时间复杂度 : O(n)
+
+        mid_max_val_left = float('-inf') #最大子数组 的左半部分 的值
+        left_row=mid-1
+
+        mid_max_val_right = float('-inf') #最大子数组 的右半部分 的值
+        right_row=mid
+
+        # 找到 最大子数组 的左半部分 最大的情况
+        left_sum=0
+        i=mid-1 # mid >=1
+        while i>=0:  # 时间复杂度 : O(n/2)
+            left_sum +=nums[i]
+
+            if left_sum>mid_max_val_left:
+                mid_max_val_left= left_sum
+                left_row= i
+
+            i=i-1
+
+        # 找到 最大子数组 的右半部分 最大的情况
+        right_sum=0
+        j=mid  # mid >=1
+        while j < len(nums):# 时间复杂度 : O(n/2)
+            right_sum +=nums[j]
+
+            if right_sum>mid_max_val_right:
+                mid_max_val_right= right_sum
+                right_row= j
+
+            j=j+1
+
+        # 最大子数组 的左半部分 和 右半部分 拼一起
+        mid_max_val=mid_max_val_left+mid_max_val_right
+        mid_list=nums[left_row:right_row+1]
+
+        result_list=[(left_max_val,left_list), (right_max_val,right_list),(mid_max_val,mid_list)]
+
+        #3.合并：取 左边 右边 和中间 里的最优解
+        max_result=max(result_list,key=lambda x: x[0])
+
+        return max_result
+
 
 class solution2:
 
     def min_dist_node_1D(self,nodes):
         """
+        最接近点对问题：
         给定 线段 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
         M1: 线段上的点进行排序，用一次线性扫描就可以找出最接近点对
@@ -137,18 +198,18 @@ class solution2:
         """
         给定 线段 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
-        M2 ： 分治法
+        M2 ： 分治法（要想快，用分治）
         ref: https://blog.csdn.net/liufeng_king/article/details/8484284
         :param nodes: [1,3,5,6,9]
         :return: 
         """
-        if len(nodes)<=1:
+        if len(nodes)<=1: # 注意递归退出条件
             min_dist=float('inf')
             res_node=None
 
             return (min_dist,res_node)
 
-        elif len(nodes)==2:
+        elif len(nodes)==2: # 注意考虑 递归到原子状况，即最小的子问题
             min_dist=abs(nodes[0]-nodes[1])
             res_node=(nodes[0],nodes[1])
 
@@ -158,15 +219,19 @@ class solution2:
         min_dist = float('inf')
         res_node = None
 
+        #1.分解：找到子问题 的切割方法，保证左右子问题规模近似
         m= (min(nodes)+max(nodes))/2 #找到切分点
 
         s1= list(filter(lambda t:t<=m, nodes)) # m的 左边的区间为 s1
         s2= list(filter(lambda t:t>m, nodes))  # m 的 右边区间为 s2
         # print(nodes_small)
 
+        # 2. 递归：求解 s1 和 s2 中的 最接近点对
         min_dist_s1, s1_node  =self.min_dist_node_1D_v2(s1)
         min_dist_s2, s2_node = self.min_dist_node_1D_v2(s2)
 
+        # 3. 中间情况： 横跨 s1 和 s2 的最接近点对
+        # 4. 合并：三种情况（s1中的 最接近点对 ,s2中的 最接近点对，横跨 s1 和 s2 的最接近点对）中 找到最优解
         if min_dist_s1 < min_dist_s2:
             min_dist=min_dist_s1
             res_node=s1_node
@@ -213,7 +278,7 @@ class solution2:
 
     def __partion(self,nums, left, right):
 
-        pivot = random.randint(left, right)
+        pivot = rand.randint(left, right)
 
         nums[right], nums[pivot] = nums[pivot], nums[right]
 
@@ -272,16 +337,16 @@ class solution2:
         给定 2D 平面 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
         M2 : 分治法
-        :param nodes: [(62, 3), (83, 70), (73, 81), (23, 60), (38, 37), (16, 5), (3, 61), (11, 74), (53, 98), (29, 50)]
+        :param nodes: 
         :return: 
         """
-        if len(nodes)<=1:
+        if len(nodes)<=1: # 注意递归退出条件
             min_dist=float('inf')
             res_node=None
 
             return (min_dist,res_node)
 
-        elif len(nodes)==2:
+        elif len(nodes)==2: # 注意考虑 递归到原子状况，即最小的子问题
 
             min_dist=self.__dist(nodes[0],nodes[1])
             res_node=(nodes[0],nodes[1])
@@ -372,10 +437,10 @@ if __name__ == '__main__':
     # print(sol.inversion_regions([2, 4, 3, 1, 5, 6]))
     # print(sol.inversion_regions_v2( [2, 4, 3, 1, 5, 6]))
 
-    # 大数据量的测试，统计运行时间
-    regions=np.random.randint(100,size=10000)
-
-    regions=list(regions)
+    # inversion_regions 的大数据量 测试 ，统计运行时间
+    # regions=np.random.randint(100,size=10000)
+    #
+    # regions=list(regions)
 
     # start = timeit.default_timer()
     # print('by inversion_regions: ')
@@ -389,6 +454,13 @@ if __name__ == '__main__':
     # end = timeit.default_timer()
     # print('time: ', end-start ,'s')
 
+#-------------------------------------------------------------#
+    nums=[-2, 1, -3, 4, -1, 2, 1, -5, 4]
+    print(sol.max_subarray(nums))
+
+#-------------------------------------------------------------#
+
+    sol = solution2()
     # nodes_1D=10*(np.random.rand(100))
     nodes_1D=rand.sample(range(0,100),10) # [0,1000]中 抽样 100个不重复的数
 
@@ -396,17 +468,38 @@ if __name__ == '__main__':
     nodes_1D=list(nodes_1D)
     # print(nodes_1D)
 
-    sol = solution2()
+
     # print(sol.min_dist_node_1D(nodes_1D))
     # print(sol.min_dist_node_1D_v2(nodes_1D))
 
-    x=rand.sample(range(0,100),10)
-    y=rand.sample(range(0,100),10)
-    nodes_2D=[(x[i],y[i]) for i in range(len(x))]
+    # x=rand.sample(range(0,100),10)
+    # y=rand.sample(range(0,100),10)
+    # nodes_2D=[(x[i],y[i]) for i in range(len(x))]
 
-    print(nodes_2D)
-    print(sol.min_dist_node_2D(nodes_2D))
-    print(sol.min_dist_node_2D_v2(nodes_2D))
+    # print(nodes_2D)
+    # print(sol.min_dist_node_2D(nodes_2D))
+    # print(sol.min_dist_node_2D_v2(nodes_2D))
+
+
+    # min_dist_node_2D 的大数据量 测试 ，统计运行时间
+    # x=rand.sample(range(0,10000),5000)
+    # y=rand.sample(range(0,10000),5000)
+    # nodes_2D=[(x[i],y[i]) for i in range(len(x))]
+    #
+    # start = timeit.default_timer()
+    # print('by inversion_regions: ')
+    # print(sol.min_dist_node_2D(nodes_2D))
+    # end = timeit.default_timer()
+    # print('time: ', end - start, 's')
+    #
+    # start = timeit.default_timer()
+    # print('by inversion_regions_v2: ')
+    # print(sol.min_dist_node_2D_v2(nodes_2D))
+    # end = timeit.default_timer()
+    # print('time: ', end-start ,'s')
+
+
+
 
 
 
