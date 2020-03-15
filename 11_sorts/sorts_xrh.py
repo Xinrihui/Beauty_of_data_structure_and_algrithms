@@ -4,7 +4,6 @@
 import timeit
 import numpy as np
 
-import math
 
 import random as rand
 
@@ -81,6 +80,16 @@ class solutions:
             # print(l)
 
         return l
+
+    def insertion_sort_v3(self,l):
+        """
+        插入排序 v3
+        
+        1.用二分查找 在有序的数组中 找到插入的位置
+        :param l: 
+        :return: 
+        """
+        pass #TODO
 
     def merge_sort(self, nums):
         """
@@ -282,6 +291,62 @@ class solutions:
         return ''.join(str_list)
 
 
+class Heap:
+
+    def __init__(self, input_list): # 构建 大顶堆
+
+        self.heap_list=input_list
+        self.heap_list.insert(0,None) # 0 号位置 空置
+
+        self.length=len(self.heap_list)
+
+        for i in range(self.length//2,0,-1): #我们对下标从 n/2 开始到 1 的数据进行堆化,下标是 n/2+1 到 n 的节点是叶子节点，我们不需要堆化
+
+            self.__up_to_down_max_heapfy(i) # 从子树的 根节点开始 往下堆化
+
+    def __up_to_down_max_heapfy(self,p):
+        """
+        从上往下 堆化，构建大顶堆
+        :param p: 
+        :return: 
+        """
+
+        while p<self.length:
+
+            left_child=2*p
+            right_child=2*p+1
+
+            max_index=p
+
+            # 找出 当前节点 左子节点 和 右子节点  中的最大节点
+            if left_child<self.length and self.heap_list[left_child] > self.heap_list[max_index]:
+                max_index=left_child
+
+            if  right_child <self.length and self.heap_list[right_child] > self.heap_list[max_index]:
+                max_index=right_child
+
+            self.heap_list[max_index], self.heap_list[p] = self.heap_list[p], self.heap_list[max_index] # 当前节点与 最大节点进行交换
+
+            if p==max_index: #最大节点 还是 当前节点，说明无需做堆的调整 ，退出循环
+                break
+            p=max_index
+
+    def sort(self):
+        """
+        实现 堆排序（逆序） 
+        
+        by heap_sort: 
+        time:  0.04278195799999995 s
+        :return: 
+        """
+
+        for i in range(self.length-1,0,-1):
+            self.heap_list[i],self.heap_list[1]=self.heap_list[1],self.heap_list[i]
+            self.length-=1
+            self.__up_to_down_max_heapfy(1)
+
+        return self.heap_list[1:]
+
 class solutions2:
 
     def bucket_sort(self,min_ele,max_ele,person_list):
@@ -449,7 +514,7 @@ if __name__ == '__main__':
     ##-------------- part1 end -----------------##
 
 
-    ##-------- part2 归并排序 快速排序 ------------##
+    ##-------- part2 归并排序 快速排序 堆排序 ------------##
 
     # print(sol.merge_sort([4, 5, 6, 1, 3, 2]))
     # print(sol.quick_sort([11, 8, 3, 9, 7, 1,2,5]))
@@ -471,6 +536,16 @@ if __name__ == '__main__':
     # print(sol.quick_select(l5,3))
     # end = timeit.default_timer()
     # print('time: ', end-start ,'s')
+
+    l6 = list(l)
+    start = timeit.default_timer()
+    print('by heap_sort: ')
+    heap = Heap(l6)
+    heap.sort()
+    end = timeit.default_timer()
+    print('time: ', end-start ,'s')
+
+
 
     ##-------------- part2 end -----------------##
 
