@@ -289,9 +289,9 @@ def test11():
 
     a={}
     a[0]=1
-    print(a[2])
+    # print(a[2])
 
-test11()
+# test11()
 from numpy import *
 
 def test12():
@@ -350,4 +350,4 @@ def test13():
 
 ##---- end python tips----##
 
-
+print(1e5)
