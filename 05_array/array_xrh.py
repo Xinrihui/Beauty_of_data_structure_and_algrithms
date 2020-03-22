@@ -350,4 +350,3 @@ def test13():
 
 ##---- end python tips----##
 
-print(1e5)
