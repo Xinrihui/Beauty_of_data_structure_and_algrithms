@@ -1,3 +1,7 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+
 # from collections import deque
 class Node:
     def __init__(self, c):

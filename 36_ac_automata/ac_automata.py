@@ -67,7 +67,7 @@ class ACAutomata:
             tmp = node
             while tmp != self._root:
                 if tmp._is_ending_char:
-                    print(f"匹配起始下标{i - tmp._length + 1}，长度{tmp._length}")
+                    print('匹配起始下标',i - tmp._length + 1 ,'长度',tmp._length)
                 tmp = tmp._suffix
 
 

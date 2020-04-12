@@ -20,6 +20,7 @@ def kmp(main, pattern):
 
     # 求解next数组
     next = get_next(pattern)
+    print(next)
 
     j = 0
     for i in range(n):
