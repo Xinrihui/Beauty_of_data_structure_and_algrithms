@@ -237,7 +237,23 @@ class weibo_relation_v2_1(weibo_relation_v1):
     
     各个表的结构为：
     
-
+    用户总个数 表
+    表名: total_userNum
+    结构： String 
+    
+    用户ID 表 
+    表名:  userid
+    结构： hash (key,value)= (userid , name) 
+    
+    用户a 的关注 列表
+    表名: follow_userid
+    结构：sorted set  { (key, score)=(follow_name,follow_userid) }
+    
+    用户b 的粉丝列表
+    表名: follower_userid 
+    结构：sorted set  { (key, score)=(follower_name,follower_userid) }
+    
+    
     """
     def __init__(self, max_follow_num,max_follower_num): #如果在子类中需要父类的构造方法就需要显示的调用父类的构造方法，或者不重写父类的构造方法
 
