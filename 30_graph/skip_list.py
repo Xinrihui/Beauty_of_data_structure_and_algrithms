@@ -17,6 +17,10 @@ class SNode:
 
 
 class SkipList:
+    """
+    by XRH 
+    date: 2020-04-12 
+    """
     def __init__(self,compare_func,size=8):
         """
         需要传入 自定义的比较函数 
@@ -92,6 +96,9 @@ class SkipList:
                 level=level-1
                 p=prev
         return p,FLAGE
+
+    def rangeQuery(self): # TODO 实现 范围查询
+        pass
 
 
     def add(self, v, value=None):
