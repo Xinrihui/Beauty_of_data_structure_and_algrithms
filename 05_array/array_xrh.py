@@ -348,6 +348,23 @@ def test13():
 
 # test13()
 
+list_0=['a',0]
+
+L=[list_0]
+
+print(L)
+
+list_0[1]=1
+print(L)
+
+hash={}
+hash['a']=list_0
+
+hash['a'][1]=2
+
+print(L)
+
+
 
 
 ##---- end python tips----##

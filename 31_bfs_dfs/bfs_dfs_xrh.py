@@ -236,6 +236,7 @@ class solution():
     def _dfs_recursive(self,current,prev_path):
 
         # print(prev_path)
+        # print(current)
 
         if current==self.end: # 递归结束条件
             return prev_path
@@ -318,7 +319,8 @@ if __name__ == '__main__':
 
     # print(sol.bfs(G, 0, 2))
 
-    # print(sol.dfs(G, 0, 2))
+    print(sol.dfs(G, 0, 2))
+
     # print(sol.dfs_v1(G, 0, 2))
 
     # print(sol.dfs_v1(G, 0, 3))
