@@ -262,7 +262,7 @@ class AcTrie:
         return res
 
 
-    def match_depreature(self, main_string):
+    def __match_depreature(self, main_string):
         """
         多模式 串匹配 ( 改进的 Tire 树 —— AC自动机)
         
@@ -320,8 +320,9 @@ class AcTrie:
         
         ref: https://time.geekbang.org/column/article/72810
         
-        :param main_string: 
-        :return: 
+        :param main_string:  待匹配的主串 eg.'ahishers'
+        :return: [(开始位置，结束位置，模式串a),... ] 
+                eg.[(1, 3, 'his'), (3, 5, 'she'), (4, 5, 'he'), (4, 7, 'hers')]
         """
 
         N = len(text)
@@ -376,6 +377,11 @@ if __name__ == '__main__':
     # patterns = ["aaaa", "bbbb"]
     # ac = AcTrie(patterns)
     # print(ac.match('aaaabbbb'))
+
+
+    patterns = ["ab"]
+    ac = AcTrie(patterns)
+    print(ac.match("abxabcabcaby"))
 
 
 

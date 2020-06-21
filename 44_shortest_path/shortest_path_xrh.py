@@ -113,6 +113,10 @@ class solutions:
 
             current = heap.pop()  # 弹出 堆中最小的元素
             print(current)
+
+            if current[0]==end_node: #起点 到 终点的最短路径产生了
+                break
+
             left_node = current[0]  # 当前节点 即 边的左端点
             curr_dis = current[1]  # 起点 到 当前节点的最短距离
 
@@ -162,13 +166,17 @@ class solutions:
         distance = {node: float('inf') for node in graph}
         distance[start_node] = 0  # 我们把起始顶点的 dist 值初始化为 0
 
-        heap = Priority_Queue([(start_node, 0)],key_func=lambda x: x[0] , compare_key_func=lambda x: x[1])  #
+        heap = Priority_Queue([(start_node, 0)],key_func=lambda x: x[0] , compare_func=lambda x: x[1])  #
 
 
         while len(heap) > 0:
 
             current = heap.pop()  # 弹出 堆中最小的元素
             print(current)
+
+            if current[0]==end_node: #起点 到 终点的最短路径产生了
+                break
+
             left_node = current[0]  # 当前节点 即 边的左端点
             curr_dis = current[1]  # 起点 到 当前节点的最短距离
 
@@ -209,7 +217,20 @@ if __name__ == '__main__':
         5: []
     }
 
-    print(sol.dijkstra_v1_1(graph,0,5))
+    # print(sol.dijkstra_v1_1(graph, 0, 5))
+    # print(sol.dijkstra_v1_1(graph,0,2))
+
+    graph_with_circle = {
+        0: [(1,10),(4,20)], # 0节点到1节点的 距离为10
+        1: [(2,15),(3,2)],
+        2: [(5,5)],
+        3: [(2,1),(5,12)],
+        4: [(5,10)],
+        5: [(4,0)] # 出现环路
+    }
+
+    print(sol.dijkstra_v1_1(graph_with_circle, 0, 4))
+
 
 
 

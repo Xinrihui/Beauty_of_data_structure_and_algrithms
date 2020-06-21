@@ -347,26 +347,17 @@ def test13():
     print([ h.pop() for i in range(len(char_list))])
 
 # test13()
+from numpy import *
 
-list_0=['a',0]
+a=[('<a' ,'</a>' ),('<span>','</span>')]
 
-L=[list_0]
+res= [[] for i in a]
 
-print(L)
+res[0].append('a')
+res[1].append('b')
+res[0].append('c')
 
-list_0[1]=1
-print(L)
-
-hash={}
-hash['a']=list_0
-
-hash['a'][1]=2
-
-print(L)
-
-
-
-
+print(res)
 ##---- end python tips----##
 
 

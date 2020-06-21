@@ -1,8 +1,6 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-
-
 from collections import *
 
 from numpy import *
@@ -637,10 +635,11 @@ if __name__ == '__main__':
     # print(sol3.get_next_v1('abcdabca'))
 
     # print(sol3.get_next('abcdabca'))
-    #
     # print(sol3.get_next('aabaabaaa'))
 
-    print(sol3.kmp('abxabcabcaby','abcaby'))
+    # print(sol3.kmp('abxabcabcaby','abcaby'))
+
+    print(sol3.kmp('abxabcabcaby', 'ab'))
 
     # print(sol3.kmp('ababababca','abababca'))
 

@@ -128,7 +128,7 @@ class weibo_relation_v1:
 
         return flag
 
-from  skip_list import * # 在 pycharm 中 把 skip_list.py 所在的 文件夹 置为 source 即可
+from  skip_list_v2_xrh import * # 在 pycharm 中 把 skip_list_v2_xrh.py 所在的 文件夹 置为 source 即可
 
 class weibo_relation_v2(weibo_relation_v1):
     """

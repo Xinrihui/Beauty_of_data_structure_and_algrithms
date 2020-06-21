@@ -8,7 +8,7 @@ class Bitmap:
     def __init__(self, num_bits: int):
         self._num_bits = num_bits
         self._bytes = bytearray(num_bits // 8 + 1)
-    
+
     def setbit(self, k: int) -> None:
         if k > self._num_bits or k < 1: return
         self._bytes[k // 8] |= (1 << k % 8)

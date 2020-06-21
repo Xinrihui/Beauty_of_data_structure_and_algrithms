@@ -112,6 +112,30 @@ class solutions:
 
         return current
 
+    def fab(self,n):
+
+        if n<3:
+            return 1
+        else:
+            return self.fab(n-1)+self.fab(n-2)
+
+    def fab_v1(self, n,b1=1,b2=1,c=3):
+        """
+        具有 线性迭代过程 特性的递归——尾递归 
+        :param n: 
+        :param b1: 
+        :param b2: 
+        :param c: 
+        :return: 
+        """
+        if n<3:
+            return 1
+        else:
+            if n==c:
+                return b1+b2
+
+            else:
+                return self.fab_v1(n,b2,b1+b2,c+1)
 
 if __name__ == '__main__':
     sol = solutions()
