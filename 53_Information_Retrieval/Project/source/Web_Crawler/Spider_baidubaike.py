@@ -24,6 +24,7 @@ import timeit
 
 import logging
 
+
 class Spider:
 
     def __init__(self,seed_url_list,max_hop_distance,

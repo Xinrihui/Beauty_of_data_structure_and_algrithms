@@ -18,6 +18,7 @@ import requests
 import chardet
 import json
 
+
 class KeyNotFoundError(ValueError):
     pass
 

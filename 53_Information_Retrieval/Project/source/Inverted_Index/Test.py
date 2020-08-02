@@ -18,6 +18,7 @@ from functools import reduce
 class Test:
 
 
+
     def test1(self):
 
         """

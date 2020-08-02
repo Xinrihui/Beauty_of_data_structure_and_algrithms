@@ -404,7 +404,7 @@ class solution_zero_one_bag_value:
 
     def run_recursive_cache(self, weights, values, capacity):
         """
-        回溯法（子问题缓存） 解 01背包问题（升级版） 
+        回溯法（子问题缓存） 解  01背包问题 升级版（上价值） 
         ref: https://time.geekbang.org/column/article/74788 
         :param weights: 
         :param values:

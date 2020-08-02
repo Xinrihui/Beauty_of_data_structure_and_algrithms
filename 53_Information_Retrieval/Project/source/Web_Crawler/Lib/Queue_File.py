@@ -3,6 +3,7 @@
 
 class File_IO:
 
+
     def test1(self):
         """
         测试 seek tell 函数的使用

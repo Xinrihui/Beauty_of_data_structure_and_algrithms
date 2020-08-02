@@ -12,6 +12,7 @@ import sys
 
 sys.path.append('../../Web_Crawler') # 能找到 此目录下的类
 
+
 sys.path.append('../../Inverted_Index')
 
 from Lib.Index_File import Tmp_Index_File

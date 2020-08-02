@@ -10,6 +10,7 @@ from collections import defaultdict
 class noDataError(ValueError):
     pass
 
+
 class Doc_Raw_File:
     """
     by XRH 

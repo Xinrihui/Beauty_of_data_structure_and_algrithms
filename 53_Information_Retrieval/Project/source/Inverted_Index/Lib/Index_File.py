@@ -16,6 +16,7 @@ import timeit
 
 from Lib.Doc_File import Doc_Raw_File
 
+
 class noDataError(ValueError):
     pass
 
