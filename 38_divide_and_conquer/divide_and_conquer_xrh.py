@@ -2,7 +2,8 @@
 # -*- coding: UTF-8 -*-
 
 import timeit
-import numpy as np
+
+from numpy import *
 
 import math
 
@@ -165,9 +166,267 @@ class solutions:
         return max_result
 
 
+
+class solution1:
+
+    def Hanoi(self, source, target, pillars, N):
+        """
+        Hanoi 塔问题
+
+        将 N 个 盘子从 源柱子 A 搬到 目的柱子 B
+
+        :param source: 源柱子
+        :param target: 目的柱子
+        :param pillars: 柱子的集合（一共 3 根）
+        :param N: 
+        :return: 
+        """
+        if N == 1:
+            print(source, '--->', target)  # 只有一个 盘子直接 搬
+
+        else:
+            tmp = list(pillars - set([source, target]))[0]  # 排除掉 源柱子 和 目的柱子 剩下的为 中间柱子
+
+            self.Hanoi(source, tmp, pillars, N - 1)  # 将 最上面的 N-1 个盘子 搬到中间柱子（保持盘子从小到大的顺序）
+            print(source, '--->', target)  # 把最下面 的盘子 搬到目的节点
+            self.Hanoi(tmp, target, pillars, N - 1)  # 把中间柱子的盘子 搬到目的节点
+
+
+    def quick_Pow(self,x, n):
+        """
+        基于分治法 的快速幂乘法
+        
+        x^n 其中 n 必为整数
+        
+        :param x: 
+        :param n: 
+        :return: 
+        """
+
+        flag = 0 # n 为负数的标记
+
+        if n < 0:
+            flag = 1 # n 为负数
+            n = abs(n)
+
+        if n == 1 and flag == 0:
+            return x
+        elif n == 1 and flag == 1:
+            return 1 / x
+        elif n == 0:
+            return 1
+        else:
+            if n % 2 == 0:
+                sub_problem = self.quick_Pow(x, n // 2)
+                result = sub_problem * sub_problem
+            else:
+                sub_problem = self.quick_Pow(x, (n - 1) // 2)  # (n-1) 括号要加
+                result = sub_problem * sub_problem * x
+
+        return result if flag == 0 else 1.0 / result
+
+    def quick_matrix_pow(self, x, N):
+        """
+        基于分治法 的快速 方阵(nxn)的 幂乘法
+
+        x^N 其中 N 必为 正整数
+        
+        1.numpy 中 无此函数 ：
+          power(x,n) , x**n 都是对矩阵中的 每一个元素( element-wise ) 求幂 
+        
+        :param x: 
+        :param n: 
+        :return: 
+        """
+        x=  array(x)
+
+        if x.shape[0] != x.shape[1]:
+            raise Exception('x:{}不是一个方阵，无法计算 矩阵的幂乘'.format(x))
+
+        L=x.shape[0]
+
+        if N == 0:
+            return   ones(shape=(L,L))
+
+        elif N==1:
+            return x
+
+        else: # N==2,3,4
+
+            if N % 2 == 0:
+                sub_problem = self.quick_matrix_pow(x, N // 2)
+                result =   dot(sub_problem, sub_problem)
+            else:
+                sub_problem = self.quick_matrix_pow(x, (N - 1) // 2)  # (n-1) 括号要加
+                result =    dot(  dot(sub_problem, sub_problem), x)
+
+        return result
+
+    def fibonacci_downToUp(self,n):
+        """
+        自底向上 求解 
+        
+        :param n: 
+        :return: 
+        """
+
+        if n == 0:
+            return 0
+        elif n == 1:
+            return 1
+        else:
+            Fibonacci = [0] * (n+1)
+
+            Fibonacci[1] = 1
+
+            for i in range(2, n+1):
+                Fibonacci[i] = Fibonacci[i - 1] + Fibonacci[i - 2]
+
+            return Fibonacci[-1]
+
+
+    def fibonacci_qucik( self, n):
+        """
+        分治法 求解 斐波那契数列 
+        
+       i= 0 1 2 3 4 5 6  7 8 
+          0,1,1,2,3,5,8,13,21,...
+        
+        :param n: 
+        :return: 
+        """
+
+        if n ==0:
+            return 0
+
+        elif n ==1 or n==2:
+
+            return 1
+
+        else: # n=3,4,...
+
+            a=  array([ [1,1],
+                         [1,0] ])
+
+            b=self.quick_matrix_pow(a,n-1)
+
+            return b[0][0]
+
+    def Int_Bit_multiplication(self,X,Y):
+        """
+        整数位乘问题
+        
+        X,Y 是 n 位二进制数 , 满足 n=2^k 
+        
+        1.取一个数的 高 k 位:  X >> k
+        
+        eg. X=8 k=2
+        
+        0b1000 >>2 = 0b10
+        
+        2.取一个数的 低 k 位: X & (2^k-1) 
+            
+        eg. X=8 k=2
+                        
+            0b1000
+         &  0b0011  
+         =  00
+        
+        0b0011= 2^2-1
+             
+        3.移位保留 原符号
+        
+        eg. X=-8 k=2
+        
+        -0b1000 >>2  = -0b10
+        
+        
+        4.移位操作的 优先级最低 ，一定要加括号 
+        
+                  
+        :param X: 10 进制表示的数
+        :param Y: 10 进制表示的数
+        :return: 
+        """
+        # X_bin=bin(X) # '0bxx ' 是一个字符串
+        # Y_bin = bin(Y)
+
+        n=max(X.bit_length(),Y.bit_length()) # 得到 二进制的位数
+
+        if n<=1 :
+
+            return X*Y
+
+        else:
+
+            A= X >> (n//2) # 取 X 的高(n//2) 位
+            B=  X & (2**(n//2)-1)  # 取 X 的低(n//2) 位
+
+            C= Y >> (n//2) # 取 Y 的高(n//2) 位
+            D=  Y & (2**(n//2)-1)  # 取 Y 的低(n//2) 位
+
+
+            AC=self.Int_Bit_multiplication(A,C)
+            BD=self.Int_Bit_multiplication(B,D)
+
+            AD_BC=self.Int_Bit_multiplication(A-B,D-C)+AC+BD
+
+            return (AC<<n) + (AD_BC<<(n//2)) + BD # 移位运算符 优先级低，记得加括号
+
+    def quick_dot(self,A, B):
+        """
+        
+        利用分治法的 快速矩阵乘法 (Strassen 矩阵乘法)
+        
+        A B 为 n 阶矩阵, n=2^k
+        
+        :param A: 
+        :param B: 
+        :return: 
+        """
+
+        n = len(A)
+        half = n // 2
+
+        if n == 1:
+            return A * B
+
+        a = A[0:half, 0:half]
+        b = A[0:half, half:]
+        c = A[half:, 0:half]
+        d = A[half:, half:]
+        e = B[0:half, 0:half]
+        f = B[0:half, half:]
+        g = B[half:, 0:half]
+        h = B[half:, half:]
+
+        P1 = self.quick_dot(a, f - h)
+        P2 = self.quick_dot(a + b, h)
+        P3 = self.quick_dot(c + d, e)
+        P4 = self.quick_dot(d, g - e)
+        P5 = self.quick_dot(a + d, e + h)
+        P6 = self.quick_dot(b - d, g + h)
+        P7 = self.quick_dot(a - c, e + f)
+
+        r = P5 + P4 - P2 + P6
+        s = P1 + P2
+        t = P3 + P4
+        u = P5 + P1 - P3 - P7
+
+
+        result = zeros((n, n), dtype=int16)
+        result[0:half, 0:half] = r
+        result[0:half, half:] = s
+        result[half:, 0:half] = t
+        result[half:, half:] = u
+
+        return result
+
+
+
 class solution2:
 
-    def min_dist_node_1D(self,nodes):
+    def min_dist_node_1D_naive(self,nodes):
         """
         最接近点对问题：
         给定 线段 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
@@ -194,7 +453,7 @@ class solution2:
 
         return min_dist,min_dist_nodes
 
-    def min_dist_node_1D_v2(self,nodes):
+    def min_dist_node_1D(self,nodes):
         """
         给定 线段 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
@@ -254,6 +513,7 @@ class solution2:
         给定 2D 平面 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
         M1: 枚举法 
+        
         :param nodes: 
         :return: 
         """
@@ -437,8 +697,8 @@ if __name__ == '__main__':
     # print(sol.inversion_regions([2, 4, 3, 1, 5, 6]))
     # print(sol.inversion_regions_v2( [2, 4, 3, 1, 5, 6]))
 
-    # inversion_regions 的大数据量 测试 ，统计运行时间
-    # regions=np.random.randint(100,size=10000)
+    # def inversion_regions 的大数据量 测试 ，统计运行时间
+    # regions=  random.randint(100,size=10000)
     #
     # regions=list(regions)
 
@@ -456,12 +716,41 @@ if __name__ == '__main__':
 
 #-------------------------------------------------------------#
     nums=[-2, 1, -3, 4, -1, 2, 1, -5, 4]
-    print(sol.max_subarray(nums))
+    # print(sol.max_subarray(nums))
+
+
+
 
 #-------------------------------------------------------------#
 
+    sol = solution1()
+
+    # print(sol.Hanoi('A','C',set(['A','B','C']),3))
+
+    # print(sol.quick_Pow(2,10))
+
+    a = [[1, 1],
+         [1, 0]]
+
+    # print(sol.quick_matrix_pow(a, 3))
+
+    # print(sol.fibonacci_downToUp(4))
+
+    # print(sol.fibonacci_qucik(4))
+
+    # print(sol.Int_Bit_multiplication(8,8))
+
+    A = arange(16).reshape(4, 4)
+    B=ones( (4,4), dtype=int16 )
+
+    print (sol.quick_dot(A,B))
+    print (dot(A,B))
+
+# -------------------------------------------------------------#
+
+
     sol = solution2()
-    # nodes_1D=10*(np.random.rand(100))
+    # nodes_1D=10*(  random.rand(100))
     nodes_1D=rand.sample(range(0,100),10) # [0,1000]中 抽样 100个不重复的数
 
     # nodes_1D=[1,3,5,6,9]

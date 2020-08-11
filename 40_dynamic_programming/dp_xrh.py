@@ -402,7 +402,7 @@ class solutions:
 
                 for i in range(max_num+1): # 第k 种零钱 用i 个, i=0,1,..,max_num
 
-                    C= states[k-1][y - i*values[k]]+i*weights[k]
+                    C= states[k-1][y - i*values[k]]+i*weights[k] # 第k 种零钱 用i 个 背包的重量
 
                     if C < C_min:
                         C_min=C
