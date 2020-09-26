@@ -41,6 +41,7 @@ class solutions:
         假设我们有几种不同币值的硬币 v1，v2，……，vn（单位是元）。
         如果我们要支付 w 元，求最少需要多少个硬币。
         比如，我们有 3 种不同的硬币，1 元、3 元、5 元，我们要支付 9 元，最少需要 3 个硬币（3 个 3 元的硬币）。
+        
         :param coin_values: [1,3,5]
         :param pay: 9
         :return: 3,[1,3,5]
@@ -832,8 +833,13 @@ if __name__ == '__main__':
 
     weights = [2,3,4,7]
     values = [1,3,5,9]
+
+    # weights = [2,3,4]
+    # values = [1,3,5]
+
     capacity=10
-    # print(sol.bag_problem(weights,values,capacity))
+
+    print(sol.bag_problem(weights,values,capacity))
 
 
     P = [10, 12, 15, 255, 1, 2, 1, 1, 1, 2, 1, 1]
@@ -858,7 +864,7 @@ if __name__ == '__main__':
     values= [1, 5, 14, 18]
     amount= 28
 
-    print(sol.coins_select_advanced(weights,values,amount))
+    # print(sol.coins_select_advanced(weights,values,amount))
 
 
 

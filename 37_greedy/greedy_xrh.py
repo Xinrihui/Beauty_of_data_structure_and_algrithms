@@ -246,6 +246,7 @@ class solutions:
         :param capacity: 100 
         :return: 
         """
+
         N=len(weights) # 物品种类
 
         weights=array(weights)

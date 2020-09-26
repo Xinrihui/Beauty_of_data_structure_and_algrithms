@@ -65,31 +65,38 @@ if __name__ == '__main__':
 
     sol=solutions()
 
-    # sol.xrh()
-    # sol.xrh()
+    flag = 1  # TODO:提交代码记得修改 状态
 
     # IDE 测试 阶段：
-    test=Test()
-    test.test_small_dataset(sol.solve)
+    if flag == 1:
 
-    test.test_large_dataset(sol.solve)
+        # sol.solve()
+        # sol.solve_naive()
+
+        # IDE 测试 阶段：
+        test=Test()
+        test.test_small_dataset(sol.solve)
+
+        test.test_large_dataset(sol.solve)
+
 
     # 提交 阶段：
-    # pycharm 开命令行 提交
-    #E:\python package\python-project\Beauty_of_data_structure_and_algrithms\kickstart\2018 Round A>python Scrambled_Words.py < inputs
-    # Case #1: 4
+    elif flag == 2:
+        # pycharm 开命令行 提交
+        #E:\python package\python-project\Beauty_of_data_structure_and_algrithms\kickstart\2018 Round A>python Scrambled_Words.py < inputs
+        # Case #1: 4
 
 
-    T = int(input().strip()) # 一共T个 测试数据
+        T = int(input().strip()) # 一共T个 测试数据
 
-    for t in range(1, T + 1):
-        N, K = [int(i) for i in input().split(' ')]
+        for t in range(1, T + 1):
+            N, K = [int(i) for i in input().split(' ')]
 
-        values=[int(i) for i in input().split(' ')]
+            values=[int(i) for i in input().split(' ')]
 
-        res = sol.solve(N,K,values)
+            res = sol.solve(N,K,values)
 
-        print('Case #{}: {}'.format(t, res))
+            print('Case #{}: {}'.format(t, res))
 
 
 

@@ -185,7 +185,7 @@ class solutions:
 
             # 2. 递归：求解 左右子问题
             self.__quick_sort(left,q-1)
-            self.__quick_sort(q+1, right)
+            self.__quick_sort(q+1,right)
 
 
 

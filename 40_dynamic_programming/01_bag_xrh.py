@@ -451,6 +451,7 @@ class solution_zero_one_bag_value:
             if i < len(self.weights):
                 self.__f(i + 1, current_bag_weight + self.weights[i],current_bag_value+self.values[i])  # f(1,2,3)
 
+
     def run_dynamic_programming_v2(self, weights,values, capacity):
         """
         动态规划法v2 解 01背包问题（升级版） ：
@@ -552,7 +553,7 @@ if __name__ == '__main__':
     sol2=solution_zero_one_bag_value()
     # print(sol2.run_recursive_cache(weights,values,5))
     # print(sol2.run_dynamic_programming_v2(weights, values, 5))
-    # print(sol2.run_dynamic_programming_v2(weights, values, 9))
+    print(sol2.run_dynamic_programming_v2(weights, values, 9))
 
     weights = [2, 2, 4, 6, 3]
     values=[3,4,8,9,6]
@@ -566,7 +567,7 @@ if __name__ == '__main__':
     # print(sol3.run_dynamic_programming_v3(prices,200))
     # print(sol3.run_dynamic_programming_v4(prices, 200))
     # print(sol3.run_dynamic_programming_v3(prices,400))
-    print(sol3.run_dynamic_programming_v4(prices, 400))
+    # print(sol3.run_dynamic_programming_v4(prices, 400))
 
 
 

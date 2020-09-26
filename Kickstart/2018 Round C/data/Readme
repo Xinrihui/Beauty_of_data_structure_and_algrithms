@@ -1,0 +1,11 @@
+online judge tools
+从在线编程网站下载 测试用例的插件
+
+https://pypi.org/project/online-judge-tools/
+
+测试：
+oj download https://codingcompetitions.withgoogle.com/kickstart/round/0000000000050ee0/0000000000051133
+（无效）
+
+oj download http://agc001.contest.atcoder.jp/tasks/agc001_a
+

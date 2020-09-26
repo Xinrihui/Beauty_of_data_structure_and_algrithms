@@ -3,6 +3,7 @@ from collections import *
 
 from  priority_queue_xrh import *
 
+from  disjoint_set_xrh import *
 
 class solutions:
 
@@ -63,7 +64,6 @@ class solutions:
         """
         最小生成树 的 Kruskal 算法
 
-        利用 优先队列
         :param graph: 
         :return: 最小生成树 的边的 list: [('1', 1, '3'), ('3', 4, '6'), ('6', 2, '4'), ('3', 5, '2'), ('2', 3, '5')]
                 ( 边开始节点, 边长 , 边的结束节点 )
@@ -133,6 +133,57 @@ class solutions:
 
         return res_edge
 
+
+    def Kruskal_v2(self, graph):
+        """
+        最小生成树 的 Kruskal 算法
+
+        利用 并查集 判断 边上的 两个点 是否在一个 连通分量中
+        
+        :param graph: 
+        :return: 最小生成树 的边的 list: [('1', 1, '3'), ('3', 4, '6'), ('6', 2, '4'), ('3', 5, '2'), ('2', 3, '5')]
+                ( 边开始节点, 边长 , 边的结束节点 )
+        """
+
+        edges=[]
+
+        visited=set()
+
+        #找到所有的边 并对边进行去重（graph 为无向图，所以 node1-> node2 和 node2 -> node1 等价）
+
+        for start_node,edge_list in graph.items():
+
+            for end_node,edge_length in edge_list:
+
+                if end_node not in visited:
+
+                    edges.append((start_node,edge_length,end_node))
+
+
+            visited.add(start_node)
+
+        # 按照 边的长度 正序排序
+        edges= sorted(edges,key=lambda ele : ele[1])
+
+        # print(edges) #[('1', 1, '3'), ('4', 2, '6'), ('2', 3, '5'), ('3', 4, '6'), ('1', 5, '4'), ('2', 5, '3'), ('3', 5, '4'), ('1', 6, '2'), ('3', 6, '5'), ('5', 6, '6')]
+
+        # 初始化 并查集
+        disjoin_set= Disjoint_Set()
+
+        res_edge = []  # 记录 最小生成树 的边 ( 边开始节点, 边长 , 边的结束节点 )
+
+        for edge in edges: # edge=('1', 1, '3')
+
+            node_s=edge[0]
+            node_e=edge[2]
+
+            if disjoin_set.add((node_s,node_e))==True: # 说明 边的两个端点 不在一个 联通分量中
+
+                res_edge.append(edge) # edge 选入 最小生成树的边
+
+
+        return res_edge
+
 if __name__ == '__main__':
 
     sol = solutions()
@@ -147,3 +198,5 @@ if __name__ == '__main__':
 
     # print(sol.Prim(graph))
     print(sol.Kruskal(graph))
+
+    print(sol.Kruskal_v2(graph))

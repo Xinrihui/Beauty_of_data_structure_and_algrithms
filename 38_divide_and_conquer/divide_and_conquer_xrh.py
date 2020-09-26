@@ -107,11 +107,14 @@ class solutions:
 
     def max_subarray(self,nums):
         """
+        
         最大子数组问题 （股票问题）
         
         :param nums: [-2,1,-3,4,-1,2,1,-5,4]
         :return: 
+        
         """
+
         if len(nums)==1:
             return (nums[0],nums)
 
@@ -167,7 +170,7 @@ class solutions:
 
 
 
-class solution1:
+class solutions1:
 
     def Hanoi(self, source, target, pillars, N):
         """
@@ -424,7 +427,7 @@ class solution1:
 
 
 
-class solution2:
+class solutions2:
 
     def min_dist_node_1D_naive(self,nodes):
         """
@@ -486,8 +489,8 @@ class solution2:
         # print(nodes_small)
 
         # 2. 递归：求解 s1 和 s2 中的 最接近点对
-        min_dist_s1, s1_node  =self.min_dist_node_1D_v2(s1)
-        min_dist_s2, s2_node = self.min_dist_node_1D_v2(s2)
+        min_dist_s1, s1_node  =self.min_dist_node_1D(s1)
+        min_dist_s2, s2_node = self.min_dist_node_1D(s2)
 
         # 3. 中间情况： 横跨 s1 和 s2 的最接近点对
         # 4. 合并：三种情况（s1中的 最接近点对 ,s2中的 最接近点对，横跨 s1 和 s2 的最接近点对）中 找到最优解
@@ -503,12 +506,15 @@ class solution2:
         s2 = list(filter(lambda t: m<=t<m+min_dist , s2))
 
         if len(s1)==1 and len(s2)==1:
-            min_dist=abs(s1[0]-s2[0])
-            res_node=(s1[0],s2[0])
+
+            if abs(s1[0]-s2[0])< min_dist:
+
+                min_dist=abs(s1[0]-s2[0])
+                res_node=(s1[0],s2[0])
 
         return (min_dist,res_node)
 
-    def min_dist_node_2D(self, nodes):
+    def min_dist_node_2D_naive(self, nodes):
         """
         给定 2D 平面 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
@@ -592,7 +598,7 @@ class solution2:
         """
         return  (node1[0] - node2[0]) ** 2 + (node1[1] - node2[1]) ** 2
 
-    def min_dist_node_2D_v2(self, nodes):
+    def min_dist_node_2D(self, nodes):
         """
         给定 2D 平面 上的 n个点，找其中的一对点，使得在n个点的所有点对中，该点对的距离最小。
         
@@ -623,8 +629,8 @@ class solution2:
         s2= list(filter(lambda t:t[0]>m, nodes))  # m 的 右边区间为 s2
         # print(nodes_small)
 
-        min_dist_s1, s1_node  =self.min_dist_node_2D_v2(s1)
-        min_dist_s2, s2_node = self.min_dist_node_2D_v2(s2)
+        min_dist_s1, s1_node  =self.min_dist_node_2D(s1)
+        min_dist_s2, s2_node = self.min_dist_node_2D(s2)
 
         res_node=None
 
@@ -653,12 +659,12 @@ class solution2:
         for i,node in enumerate(P_y_sorted):
 
             if node in P1:
-                # 向上找3个
+                # 向上找4个
                 j=i
                 up_times=0
                 while j>=0:
 
-                    if up_times>3:
+                    if up_times>4:
                         break
 
                     if  P_y_sorted[j] in P2:
@@ -670,12 +676,12 @@ class solution2:
                            res_node = (node,P_y_sorted[j])
                     j=j-1
 
-                # 向下找3个
+                # 向下找4个
                 j=i
                 down_times=0
                 while j < len(P_y_sorted):
 
-                    if down_times>3:
+                    if down_times>4:
                         break
 
                     if  P_y_sorted[j] in P2:
@@ -689,6 +695,267 @@ class solution2:
 
 
         return (min_dist,res_node)
+
+
+
+class test_chips:
+
+    """
+    by XRH 
+    date: 2020-08-13 
+
+    芯片测试问题
+
+    从 n 片芯片中 挑出一片好的 芯片 ，使用最少的 测试次数 
+    
+    前提假设 ：
+    n 片芯片中 好芯片比坏芯片 至少多一片
+    
+        
+    功能：
+
+    1. 生成 n 片待测试的 芯片，其中 好坏芯片个数 随机，但是保证 前提假设成立
+    
+    2. 测试台 同时测试 两个芯片 A 和 B , 它们 互相 说对方是否为 好芯片.
+      若为 好芯片 则会说实话 , 若为 坏芯片 则随便说
+        
+    3. 朴素方法 检测 n 个 芯片, 找到一个 好芯片
+    
+    4. 利用分治策略 检测 n 个 芯片, 找到一个 好芯片
+    
+    """
+
+    def generate_chips(self, n):
+        """
+        生成 n 片待测试的 芯片
+        
+        0 代表 坏芯片，1代表好芯片 
+        
+        :param n: 10
+        :return: chips
+        
+        (index, flag) list  
+        eg.
+        [(1, 1), (9, 0), (7, 0), (6, 0), (8, 0), (4, 1), (2, 1), (5, 1), (3, 1), (0, 1)]
+        
+        """
+        difference_num=1 # 好芯片 比 坏芯片多1个
+        # difference_num=random.randint(1,n) # 好芯片 比 坏芯片多的 [1,n] 个
+
+        unqualified_num= (n- difference_num)//2 # 坏芯片个数
+
+        qualified_num = n- unqualified_num # 好芯片个数
+
+        qualified_chips= [(i,1)  for i in range(qualified_num)] # 1 代表好芯片
+
+        unqualified_chips= [(i,0)  for i in range(qualified_num,qualified_num+unqualified_num)] # 0 代表 坏芯片
+
+        chips= qualified_chips+unqualified_chips
+
+        random.shuffle(chips) # 打乱 顺序
+
+        return chips
+
+
+    def test_platform(self,A,B):
+        """
+        测试台 同时测试 两个芯片 A 和 B , 它们 互相 说对方是否为 好芯片
+        
+        :param A: (index, flag)  flag 是芯片实际好坏的标记
+                  eg. (9, 0)
+        :param B: 
+        :return: 
+        """
+        A=A[1]
+        B = B[1]
+
+        res_flag=None
+
+        if A==1 and B==1:  # A,B 都是好芯片
+
+            res_flag=[1,1]
+
+        elif A==1 and B==0: # A 为好 B 为坏
+
+            res_flag = [0, random.randint(0,1)]  # A说B 是坏芯片, B随便乱说
+
+        elif A == 0 and B == 1:  # A 为坏 B 为好
+
+            res_flag = [ random.randint(0, 1),0 ]
+
+        else: # A,B 都是 坏芯片
+
+            res_flag = [random.randint(0, 1), random.randint(0, 1)]
+
+        return res_flag
+
+
+    def find_one_qualified_chip_naive(self,chips):
+        """
+        朴素方法 检测 n 个 芯片, 找到一个 好芯片
+        
+        时间复杂度：O(n^2)
+        
+        :param chips:(index, flag) list 
+         eg. [(1, 1), (9, 0), (7, 0), (6, 0), (8, 0), (4, 1), (2, 1), (5, 1), (3, 1), (0, 1)]
+        :return: 
+        """
+
+        n=len(chips)
+
+        qualified_index=-2 # 好芯片的标号
+
+        # flag=0 # 找到好芯片的标记
+
+        for i in range(n): # 从 第0 个芯片开始
+
+
+            A=chips[i] # 待检测的 芯片
+
+            qualified_votes=0 # 说A 是 好芯片的票数
+            unqualified_votes=0 # 说A 是 坏芯片的票数
+
+            for j in range(i+1,n): # 其他所有的芯片来 检测 A 芯片
+
+                B=chips[j]
+
+                report=self.test_platform(A,B)
+
+                if report[1]==1: # B 说 A 是好芯片
+                    qualified_votes+=1
+                else:# B 说 A 是坏芯片
+                    unqualified_votes+=1
+
+            if n%2 ==0: # n 为偶数
+
+                if qualified_votes>= n//2: # 第 i 个芯片为好芯片
+
+                    qualified_index=i
+
+                    break
+
+            else: # n 为奇数
+
+                if qualified_votes >= (n-1) // 2:  # 第 i 个芯片为好芯片
+
+                    qualified_index = i
+
+                    break
+
+
+        return chips[qualified_index]
+
+    def find_one_qualified_chip(self, chips):
+
+
+        self.qualified_chip = None
+
+        self.__find_one_qualified_chip(chips)
+
+        return self.qualified_chip
+
+
+    def __find_one_qualified_chip(self, chips):
+        """
+        利用分治策略 检测 n 个 芯片, 找到一个 好芯片
+            
+        时间复杂度：
+        
+        T(n)=T(n/2)+ O(n)
+        
+        T(n)=O(n)
+        
+        :param chips: [1, 1, 0, 1, 1, 1, 1, 1]
+        :return: 
+        """
+
+        n = len(chips)
+
+        qualified_index = -2
+
+        if n in (1,2):
+
+            self.qualified_chip =chips[0]
+
+            return
+
+        elif n==3:
+
+            A=chips[0]
+            B=chips[1]
+
+            report=self.test_platform(A,B)
+
+            if report[0]==1 and  report[1]==1: # 只可能为2个都为好(因为 好芯片比坏芯片至少多一个 所以 好芯片个数大于2个)
+
+                self.qualified_chip=chips[0]
+
+            else: # chips[0] chips[1] 1好1坏，说明 chips[2] 必然为好芯片
+
+                self.qualified_chip = chips[2]
+
+            return
+
+
+        if n%2 !=0: # n 为奇数
+
+            # 轮空的芯片 单独测试一轮
+            A = chips[0] # 被测试的芯片
+
+            qualified_votes = 0  # 说A 是 好芯片的票数
+            unqualified_votes = 0  # 说A 是 坏芯片的票数
+
+            for j in range(1, n):  # 其他所有的芯片来 检测 A 芯片
+
+                B = chips[j]
+
+                report = self.test_platform(A, B)
+
+                if report[1] == 1:  # B 说 A 是好芯片
+                    qualified_votes += 1
+                else:  # B 说 A 是坏芯片
+                    unqualified_votes += 1
+
+
+            # n 为奇数
+            if qualified_votes >= (n - 1) // 2:  # 第 0 个芯片为好芯片
+
+                qualified_index = 0
+
+                self.qualified_chip=chips[qualified_index]
+
+
+            else:  # 第 0 个芯片为 坏芯片
+
+                self.find_one_qualified_chip(chips[1:]) # 把坏芯片扔掉
+
+
+        else:  # n 为 偶数
+
+            # n 个 芯片分为 n//2 组
+            chips_group = []
+            for i in range(0, len(chips), n//2):
+                chips_group.append(chips[i:i + (n//2)])
+
+
+            chips=[]
+
+            for i in range(n//2):
+
+                A=chips_group[0][i]
+                B=chips_group[1][i]
+
+                report=self.test_platform(A,B)
+
+                if report[0]==1 and report[1]==1: # 一个小组内 两片都互相 说好, 留下其中一片
+
+                    chips.append(A)
+
+                # 其他 所有情况, 该组芯片全部丢弃
+
+            self.find_one_qualified_chip(chips) # 分治法 关键：子问题 与 原问题 有相同的性质
+                                                #              即满足 分组筛选过后的chips 中 好芯片的 个数 至少比 坏芯片多一个
+
 
 
 if __name__ == '__main__':
@@ -719,11 +986,9 @@ if __name__ == '__main__':
     # print(sol.max_subarray(nums))
 
 
-
-
 #-------------------------------------------------------------#
 
-    sol = solution1()
+    sol = solutions1()
 
     # print(sol.Hanoi('A','C',set(['A','B','C']),3))
 
@@ -743,13 +1008,13 @@ if __name__ == '__main__':
     A = arange(16).reshape(4, 4)
     B=ones( (4,4), dtype=int16 )
 
-    print (sol.quick_dot(A,B))
-    print (dot(A,B))
+    # print (sol.quick_dot(A,B))
+    # print (dot(A,B))
 
 # -------------------------------------------------------------#
 
 
-    sol = solution2()
+    sol = solutions2()
     # nodes_1D=10*(  random.rand(100))
     nodes_1D=rand.sample(range(0,100),10) # [0,1000]中 抽样 100个不重复的数
 
@@ -758,16 +1023,16 @@ if __name__ == '__main__':
     # print(nodes_1D)
 
 
+    # print(sol.min_dist_node_1D_naive(nodes_1D))
     # print(sol.min_dist_node_1D(nodes_1D))
-    # print(sol.min_dist_node_1D_v2(nodes_1D))
 
-    # x=rand.sample(range(0,100),10)
-    # y=rand.sample(range(0,100),10)
-    # nodes_2D=[(x[i],y[i]) for i in range(len(x))]
+    x=rand.sample(range(0,100),10)
+    y=rand.sample(range(0,100),10)
+    nodes_2D=[(x[i],y[i]) for i in range(len(x))]
 
     # print(nodes_2D)
+    # print(sol.min_dist_node_2D_naive(nodes_2D))
     # print(sol.min_dist_node_2D(nodes_2D))
-    # print(sol.min_dist_node_2D_v2(nodes_2D))
 
 
     # min_dist_node_2D 的大数据量 测试 ，统计运行时间
@@ -776,19 +1041,29 @@ if __name__ == '__main__':
     # nodes_2D=[(x[i],y[i]) for i in range(len(x))]
     #
     # start = timeit.default_timer()
-    # print('by inversion_regions: ')
-    # print(sol.min_dist_node_2D(nodes_2D))
+    # print('by min_dist_node_2D_naive: ')
+    # print(sol.min_dist_node_2D_naive(nodes_2D))
     # end = timeit.default_timer()
     # print('time: ', end - start, 's')
     #
     # start = timeit.default_timer()
-    # print('by inversion_regions_v2: ')
-    # print(sol.min_dist_node_2D_v2(nodes_2D))
+    # print('by min_dist_node_2D: ')
+    # print(sol.min_dist_node_2D(nodes_2D))
     # end = timeit.default_timer()
     # print('time: ', end-start ,'s')
 
 
+# -------------------------------------------------------------#
 
+    sol3=test_chips()
+
+    chips=sol3.generate_chips(10)
+
+    print(chips)
+
+    # print(sol3.find_one_qualified_chip_naive(chips))
+
+    print(sol3.find_one_qualified_chip(chips))
 
 
 
