@@ -2,7 +2,7 @@
 from collections import *
 
 
-class Disjoint_Set():
+class DisjointSet():
     """
 
     by XRH 
@@ -10,11 +10,11 @@ class Disjoint_Set():
 
     实现 并查集( 不相交集合的森林 )
     
-    提供以下功能：
+    功能：
     1. 判断两个元素 是否在一个集合中
     2. 对两个元素 所在的不同的集合 进行合并
     3. 输出 元素 所在的集合
-    4. 输出 图中 所有 连通分量
+    4. 输出 无向图中的 所有 连通分量
     
     """
 
@@ -213,7 +213,7 @@ if __name__ == '__main__':
 
     edge_list=[('a','b'),('b','c'),('b','d'),('e','f'),('g','e'),('h','i'),('j','j')]
 
-    disjoint_set = Disjoint_Set(edge_list)
+    disjoint_set = DisjointSet(edge_list)
 
     # print(disjoint_set.parent)
     # print(disjoint_set.rank)

@@ -392,7 +392,6 @@ class Solution:
 
 class Test:
     def test_small_dataset(self, func):
-        assert func("babad") == 'bab'
 
 
         # TODO: 边界条件
