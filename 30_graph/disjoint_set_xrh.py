@@ -2,7 +2,7 @@
 from collections import *
 
 
-class DisjointSet():
+class DisjointSet:
     """
 
     by XRH 
@@ -108,6 +108,7 @@ class DisjointSet():
         return root
 
     def __union(self,node1,node2):
+
         """
         找出 node1 和 node2 对应的集合, 并将 它们按秩合并
         ( 把 高度较小的树 合并到高度较大的树中 )

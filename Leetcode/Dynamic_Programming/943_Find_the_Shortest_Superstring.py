@@ -6,57 +6,171 @@ import timeit
 from collections import *
 
 import numpy as np
+
+import itertools as iter
+
 class Solution:
 
-    # longestPalindrome
-    def solve(self, s):
+    # def shortestSuperstring(self, A: List[str]) -> str:
+    def solve(self, A):
         """
 
 
         时间复杂度 
 
-        :param s: 
+        :param A: 
         :return: 
         """
-        # L_s=len(s)
+        n=len(A)
 
-        # s = ' ' + s
-        # nums=[0]+nums # 数组 前面加上0 ,生成新的数组, 不改变原来的 nums
+        edges=[] # 边的集合 (源节点, 目的节点, 边长)
 
-        # dp=np.zeros((L_s+1,L_s,L_s),dtype=bool) # 方便调试
-        # dp=[[[False for __ in range(L_s)] for __ in range(L_s)] for __ in range(L_s+1)] # 提高效率
+        A_tmp=A+[''] # 末尾 添加 1个 起点
 
-        # dp = [[[-65536,-65536] for __ in range(K + 1)] for __ in range(N + 1)] # TODO: 少掉 1层循环 时间减少很多 time
+        for pair in iter.permutations(range(n+1),2):# 长度为 2  的全排列
+            edges.append( ( pair[0],pair[1],self.commonLength(A_tmp[pair[0]],A_tmp[pair[1]])) )
+
+        # print(edges)
+
+        # 建立 完全图
+        G = {i:{} for i in range(n+1)}
+
+        for pair in edges:
+            G[pair[0]][pair[1]]=pair[2] #
+
+        # print(G) # {0: {1: 0, 2: 1, 3: 0, 4: 3, 5: 0},
+                 #  1: {0: 0, 2: 0, 3: 1, 4: 0, 5: 0},
+                 #  2: {0: 0, 1: 3, 3: 0, 4: 1, 5: 0},
+                 #  3: {0: 2, 1: 0, 2: 0, 4: 1, 5: 0},
+                 #  4: {0: 0, 1: 1, 2: 0, 3: 0, 5: 0},
+                 #  5: {0: 0, 1: 0, 2: 0, 3: 0, 4: 0}}
+
+        end=n
+
+        state= 2**n - 1
+
+        start_node=(end,state)
+
+        self.dp={}
+
+        self.child_node={}
+
+        d=self.__process(start_node,n,G)
+
+        # print(self.child_node)
+        # print(self.dp)
+
+        # 追踪解
+        path=[]
+        node=start_node
+
+        while node in self.child_node: # 得到 搜索路径
+            path.append(node[0])
+            node=self.child_node[node]
+
+        # print(d,path)
+
+        # 利用 搜索路径 拼接 结果字符串
+        res=''
+        for i in range(1,n+1): # n=5  path=[5, 2, 1, 3, 0, 4]
+
+            prev_node = path[i-1]
+            node=path[i]
+
+            common_length=G[prev_node][node]
+
+            res= res + A_tmp[node][common_length:]
+
+        return res
 
 
-        # for l in range(1,L+1):
-        #     for i in range(1,L-l+1+1):
-        #         j=i+l-1
-        #
-        #         for k in range(i+1,j):
-        #
-        #             current = nums[i]*nums[k] * nums[j] + dp[k - i + 1][i]+ dp[j - k + 1][k]
-        #
-        #             dp[l][i]=max(dp[l][i],current) # 更新最大值
+
+    def __process(self, node,n,G):
+        """
+        旅行商问题(TSP)
+        
+        记忆化递归
+        
+        :param node: 
+        :param n: 
+        :param G: 
+        :return: 
+        """
+
+        if node in self.dp:
+            return self.dp[node]
+
+        c=node[0]
+        state=node[1]
+
+        if state==0: # state 中没有元素了
+            max_d=0
+            self.child_node[node]=None # 初始状态, 没有下一个 node
+
+        else:
+            max_d=0
+            for i in range(n):
+                if (state>>i) & 1 ==1: # 若 第 i 位 为 1
+                    next=i
+                    nextState= state ^ (1<<i) # 将第 i 位 置为 0
+                    nextNode=(next, nextState)
+
+                    d= self.__process(nextNode,n,G)+G[c][next]
+
+                    if d>= max_d:
+                        max_d=d
+                        self.child_node[node]=nextNode # 记录 最佳选择
+
+        self.dp[node]=max_d
+
+        return max_d
+
+
+    def commonLength(self,s1,s2):
+        """
+        s1 与 s2  进行插入后 的 公共子数组的长度
+        
+        即 s1 的后缀 与 s2 的前缀 的最大 公共长度
+        
+        :param s1: 
+        :param s2: 
+        :return: 
+        """
+
+        n=len(s1)
+        m=len(s2)
+
+        if n <=1 or m <=1: # 长度为1 不可能 能进行插入, 因为 假设 A 中没有字符串是 A 中另一个字符串的子字符串
+            return 0
+
+        i=1
+
+        while i < n:
+            k=n-i
+            if s1[i:]==s2[:k]:
+                break
+            i+=1
+        else:
+            k=0
+
+        return k
+
+
 
 
 class Test:
     def test_small_dataset(self, func):
 
-        assert func("babad") == 'bab'
+        assert func(["catg","ctaagt","gcta","ttca","atgcatc"]) == "gctaagttcatgcatc"
 
-        assert func("babab") == 'babab'
+        assert func(["alex","loves","leetcode"]) == "leetcodelovesalex"
 
-        assert func("cbbd") == 'bb'
-
-        assert func("cbbc") == 'cbbc'
-
-        assert func("abcd") == 'a'
+        assert func(["sssv","svq","dskss","sksss"]) == "dsksssvq"
 
         # TODO: 边界条件
-        assert func(None) == None
-
-        assert func('') == ''
+        # assert func(None) == None
+        #
+        # assert func('') == ''
 
 
     def read_test_case_fromFile_matrix(self, dir):
@@ -152,12 +266,22 @@ if __name__ == '__main__':
 
     # IDE 测试 阶段：
 
-    print(sol.solve("babad"))
+    # print(sol.commonLength('gcta','ctaatg'))
+
+    # print(sol.commonLength('gctat', 'ctaatg'))
+
+    # print(sol.commonLength('gctat', 'ttca'))
+
+    # print(sol.commonLength('sssv', 'svq'))
+
+    # print(sol.solve(["sssv","svq","dskss","sksss"]))
+
+    print(sol.solve(["catg", "ctaagt", "gcta", "ttca", "atgcatc"]))
 
 
     # IDE 测试 阶段：
     test = Test()
-    # test.test_small_dataset(sol.solve)
+    test.test_small_dataset(sol.solve)
 
     # test.test_large_dataset(sol.solve)
 
